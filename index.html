@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGY-SAMPLER STUDIO PRO | Virtual MPC Hardware & DSP Engine</title>
+  <title>CDC-SAMPLER STUDIO PRO | Virtual MPC Hardware & DSP Engine</title>
   <style>
     :root {
       --chassis-dark: #12141a;
@@ -130,6 +130,15 @@
       gap: 8px;
     }
 
+    .ui-icon {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+      pointer-events: none;
+    }
+
     .btn {
       background: linear-gradient(180deg, #303748 0%, #1f232e 100%);
       color: var(--text-main);
@@ -142,6 +151,7 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       transition: all 0.15s ease;
       box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
@@ -468,22 +478,95 @@
 
     /* LOWER SECTION: 4X4 PADS + SEQUENCER MATRIX */
     .bottom-studio-grid {
-      display: grid;
-      grid-template-columns: 460px 1fr;
-      gap: 20px;
+      display: flex;
+      flex-direction: row;
+      gap: 0;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .pads-section {
+      flex: 1 1 50%;
+      min-width: 350px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sequencer-card {
+      flex: 1 1 50%;
+      min-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* INTERACTIVE SPLITTER BAR */
+    .layout-splitter {
+      width: 14px;
+      margin: 0 4px;
+      cursor: col-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 10;
+      transition: background 0.15s ease;
+      border-radius: 4px;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .layout-splitter:hover,
+    .layout-splitter.dragging {
+      background: rgba(255, 119, 0, 0.18);
+    }
+
+    .splitter-handle {
+      width: 4px;
+      height: 48px;
+      background: #2a3447;
+      border-radius: 2px;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .splitter-handle::before,
+    .splitter-handle::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 4px;
+      height: 12px;
+      background: #2a3447;
+      border-radius: 2px;
+      transition: all 0.15s ease;
+    }
+    .splitter-handle::before { top: -18px; }
+    .splitter-handle::after { bottom: -18px; }
+
+    .layout-splitter:hover .splitter-handle,
+    .layout-splitter.dragging .splitter-handle,
+    .layout-splitter:hover .splitter-handle::before,
+    .layout-splitter:hover .splitter-handle::after,
+    .layout-splitter.dragging .splitter-handle::before,
+    .layout-splitter.dragging .splitter-handle::after {
+      background: var(--accent-orange);
+      box-shadow: 0 0 8px var(--accent-orange);
     }
 
     @media (max-width: 1024px) {
       .bottom-studio-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        gap: 20px;
       }
-    }
-
-    /* 4X4 SILICONE PADS MATRIX */
-    .pads-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      .layout-splitter {
+        display: none;
+      }
+      .pads-section, .sequencer-card {
+        flex: 1 1 100%;
+        min-width: 100%;
+      }
     }
 
     .bank-bar {
@@ -518,6 +601,211 @@
       color: #000;
       border-color: #00d2ff;
       box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+    }
+
+    /* MODE SELECTOR (PADS vs CHROMATIC) */
+    .mode-toggle-group {
+      display: flex;
+      background: #090b10;
+      border: 1px solid #293245;
+      border-radius: 5px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-toggle-btn {
+      background: transparent;
+      border: none;
+      color: #8391a8;
+      font-weight: 800;
+      font-size: 10px;
+      padding: 5px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .mode-toggle-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: 900;
+      box-shadow: 0 0 10px rgba(255, 119, 0, 0.4);
+    }
+
+    /* CHROMATIC PIANO KEYBOARD VIEW */
+    .chromatic-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #0d0f15;
+      padding: 14px;
+      border-radius: 10px;
+      border: 2px solid #272d3e;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      min-height: 380px;
+    }
+
+    .chromatic-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #141822;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #262e3f;
+      font-size: 11px;
+    }
+
+    .mini-pads-picker {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 4px;
+      background: #090b10;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #1f2737;
+    }
+
+    .mini-pad-btn {
+      background: #181d28;
+      border: 1px solid #2d384c;
+      border-radius: 4px;
+      color: #92a2b8;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 4px 2px;
+      text-align: center;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: var(--font-mono);
+      transition: all 0.1s ease;
+    }
+
+    .mini-pad-btn:hover {
+      background: #252e40;
+      color: #fff;
+    }
+
+    .mini-pad-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      border-color: #ffa533;
+      font-weight: 900;
+      box-shadow: 0 0 8px rgba(255, 119, 0, 0.5);
+    }
+
+    .piano-keys-container {
+      position: relative;
+      display: flex;
+      height: 165px;
+      background: #07080c;
+      border-radius: 6px;
+      padding: 4px 4px 0 4px;
+      border: 2px solid #1a202d;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.85), inset 0 2px 4px rgba(0,0,0,0.8);
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #2b3548 #090b10;
+    }
+
+    .piano-keys-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .piano-keys-container::-webkit-scrollbar-track {
+      background: #090b10;
+      border-radius: 3px;
+    }
+    .piano-keys-container::-webkit-scrollbar-thumb {
+      background: #2b3548;
+      border-radius: 3px;
+    }
+    .piano-keys-container::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-orange);
+    }
+
+    .piano-key {
+      position: relative;
+      cursor: pointer;
+      border-radius: 0 0 4px 4px;
+      transition: transform 0.04s ease, background 0.06s ease, box-shadow 0.06s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 6px;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+
+    .piano-key.white-key {
+      flex: 0 0 36px;
+      width: 36px;
+      min-width: 36px;
+      max-width: 36px;
+      height: 100%;
+      background: linear-gradient(180deg, #d8dce2 0%, #f4f6f8 60%, #e2e5eb 100%);
+      border: 1px solid #7c8594;
+      border-top: none;
+      z-index: 1;
+      color: #1a202c;
+      box-shadow: inset 0 -3px 6px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .piano-key.white-key:hover {
+      background: linear-gradient(180deg, #e8edf3 0%, #ffffff 70%, #edf1f7 100%);
+    }
+
+    .piano-key.white-key.active {
+      background: linear-gradient(180deg, #00e1ff 0%, #0088ff 100%) !important;
+      color: #000 !important;
+      box-shadow: 0 0 16px rgba(0, 210, 255, 0.9), inset 0 2px 4px rgba(255,255,255,0.6) !important;
+      transform: translateY(2px);
+    }
+
+    .piano-key.black-key {
+      position: absolute;
+      width: 22px;
+      min-width: 22px;
+      max-width: 22px;
+      height: 60%;
+      background: linear-gradient(180deg, #181b22 0%, #2f3644 65%, #0f1217 100%);
+      border: 1px solid #000;
+      border-top: none;
+      z-index: 2;
+      color: #8ea1b8;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.25);
+    }
+
+    .piano-key.black-key:hover {
+      background: linear-gradient(180deg, #242934 0%, #3e485b 65%, #181c24 100%);
+    }
+
+    .piano-key.black-key.active {
+      background: linear-gradient(180deg, #ff8800 0%, #d43b00 100%) !important;
+      color: #fff !important;
+      box-shadow: 0 0 16px rgba(255, 136, 0, 0.9), inset 0 1px 2px rgba(255,255,255,0.6) !important;
+      transform: translateY(2px);
+    }
+
+    .key-note-name {
+      font-size: 9px;
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .key-shortcut-hint {
+      font-size: 8px;
+      opacity: 0.75;
+      pointer-events: none;
+      margin-top: 2px;
     }
 
     .pad-grid-4x4 {
@@ -690,6 +978,223 @@
       color: #6b778d;
     }
 
+    /* MULTI-TRACK SEQUENCER STYLES */
+    .multitrack-wrapper {
+      display: flex;
+      flex-direction: column;
+      background: #090b10;
+      border: 1px solid #202735;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.7);
+    }
+
+    .multitrack-scroll-area {
+      max-height: 290px;
+      overflow-y: auto;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #2b3548 #090b10;
+    }
+
+    .multitrack-scroll-area::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .multitrack-scroll-area::-webkit-scrollbar-track {
+      background: #090b10;
+    }
+    .multitrack-scroll-area::-webkit-scrollbar-thumb {
+      background: #2b3548;
+      border-radius: 3px;
+    }
+    .multitrack-scroll-area::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-orange);
+    }
+
+    .multitrack-header-row {
+      display: grid;
+      grid-template-columns: 180px repeat(16, minmax(22px, 1fr));
+      gap: 4px;
+      align-items: center;
+      background: #11151e;
+      padding: 6px 10px;
+      border-bottom: 2px solid #242c3d;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .multitrack-header-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: #79869c;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+
+    .multitrack-col-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .multitrack-step-led {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #1c2230;
+      transition: background 0.05s ease;
+    }
+
+    .multitrack-step-led.current-step {
+      background: #00ff88;
+      box-shadow: 0 0 8px #00ff88;
+    }
+
+    .multitrack-col-head span {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      color: #637085;
+      font-weight: 700;
+    }
+
+    .multitrack-row {
+      display: grid;
+      grid-template-columns: 180px repeat(16, minmax(22px, 1fr));
+      gap: 4px;
+      align-items: center;
+      padding: 4px 10px;
+      border-bottom: 1px solid #161b24;
+      transition: background 0.1s ease;
+    }
+
+    .multitrack-row:nth-child(even) {
+      background: #0c0f16;
+    }
+
+    .multitrack-row:hover {
+      background: #151b26;
+    }
+
+    .multitrack-row.active-pad-row {
+      border-left: 3px solid var(--accent-orange);
+      background: rgba(255, 119, 0, 0.08);
+    }
+
+    .multitrack-row-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .multitrack-pad-num {
+      font-size: 9px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #79869c;
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    .multitrack-row-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #cbd4e2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      font-family: var(--font-display);
+    }
+
+    .multitrack-row:hover .multitrack-row-name {
+      color: #fff;
+    }
+
+    .multitrack-row.active-pad-row .multitrack-row-name {
+      color: var(--accent-orange);
+      font-weight: 800;
+    }
+
+    .multitrack-track-btns {
+      display: flex;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .track-btn {
+      width: 18px;
+      height: 18px;
+      font-size: 9px;
+      font-weight: 900;
+      border-radius: 3px;
+      border: 1px solid #2a3345;
+      background: #181d28;
+      color: #77869d;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease;
+      padding: 0;
+      font-family: var(--font-mono);
+    }
+
+    .track-btn:hover {
+      background: #242c3d;
+      color: #fff;
+    }
+
+    .track-btn.btn-mute.active {
+      background: #ff3344 !important;
+      border-color: #ff5566 !important;
+      color: #fff !important;
+      box-shadow: 0 0 8px rgba(255, 51, 68, 0.7);
+    }
+
+    .track-btn.btn-solo.active {
+      background: #e5a93b !important;
+      border-color: #ffc252 !important;
+      color: #000 !important;
+      box-shadow: 0 0 8px rgba(229, 169, 59, 0.7);
+    }
+
+    .multitrack-step-btn {
+      width: 100%;
+      height: 22px;
+      background: #161b26;
+      border: 1px solid #262f3f;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.08s ease;
+      padding: 0;
+    }
+
+    .multitrack-step-btn:hover {
+      border-color: #485773;
+      background: #202737;
+    }
+
+    /* Beat groupings in multitrack (steps 1, 5, 9, 13) */
+    .multitrack-step-btn.beat-start {
+      background: #1d2331;
+      border-color: #354258;
+    }
+
+    .multitrack-step-btn.active {
+      background: linear-gradient(180deg, #ff7700 0%, #ba4d00 100%) !important;
+      border-color: #ffa333 !important;
+      box-shadow: 0 0 7px rgba(255, 119, 0, 0.65);
+    }
+
+    .multitrack-row.muted {
+      opacity: 0.4;
+    }
+
     /* LIVE SAMPLING DOCK */
     .sampling-dock {
       display: flex;
@@ -759,9 +1264,13 @@
   <!-- HEADER -->
   <header>
     <div class="brand-group">
-      <div class="brand-badge">&#9835;</div>
+      <div class="brand-badge">
+        <svg class="ui-icon" style="width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/>
+        </svg>
+      </div>
       <div class="brand-info">
-        <h1>AGY-SAMPLER STUDIO PRO <span class="pill">VIRTUAL HARDWARE DSP</span></h1>
+        <h1>CDC-SAMPLER STUDIO PRO <span class="pill">VIRTUAL HARDWARE DSP</span></h1>
         <p>Zero-Latency Web Audio Engine &bull; Transient Slicer &bull; MPC Groovebox</p>
       </div>
     </div>
@@ -770,9 +1279,24 @@
     <div class="top-transport-rack">
       <!-- Play / Stop / Record -->
       <div class="control-group">
-        <button class="btn btn-play" id="btnPlaySeq">&#9654; PLAY</button>
-        <button class="btn" id="btnStopSeq">&#9632; STOP</button>
-        <button class="btn btn-rec" id="btnRecSeq">&#9679; REC</button>
+        <button class="btn btn-play" id="btnPlaySeq">
+          <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <span>PLAY</span>
+        </button>
+        <button class="btn" id="btnStopSeq">
+          <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="4" y="4" width="16" height="16" rx="2"/>
+          </svg>
+          <span>STOP</span>
+        </button>
+        <button class="btn btn-rec" id="btnRecSeq">
+          <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="7"/>
+          </svg>
+          <span>REC</span>
+        </button>
       </div>
 
       <!-- BPM & Swing -->
@@ -781,7 +1305,12 @@
           <span class="bpm-label">BPM</span>
           <input type="number" id="inputBPM" class="bpm-val-input" min="40" max="240" value="120">
         </div>
-        <button class="btn" id="btnTapTempo">TAP</button>
+        <button class="btn" id="btnTapTempo">
+          <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+          <span>TAP</span>
+        </button>
         <select class="swing-selector" id="selectSwing">
           <option value="0">Swing: 50% (Straight)</option>
           <option value="0.1" selected>Swing: 55% (Light)</option>
@@ -792,8 +1321,22 @@
 
       <!-- Metronome & Master Mix Export -->
       <div class="control-group">
-        <button class="btn" id="btnMetronome">&#9200; CLICK</button>
-        <button class="btn btn-orange" id="btnExportWav">&#128190; EXPORT MIX (.WAV)</button>
+        <button class="btn" id="btnMetronome">
+          <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 21h10l-3-15h-4l-3 15z"/>
+            <path d="M12 18l5-9"/>
+            <circle cx="17" cy="9" r="1.5" fill="currentColor"/>
+          </svg>
+          <span>CLICK</span>
+        </button>
+        <button class="btn btn-orange" id="btnExportWav">
+          <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>EXPORT MIX (.WAV)</span>
+        </button>
       </div>
     </div>
   </header>
@@ -812,9 +1355,30 @@
             OLED WAVEFORM & TRANSIENT SLICER
           </div>
           <div style="display:flex; gap:6px;">
-            <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnNormalizeSample">NORMALIZE</button>
-            <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnReverseSample">&#8644; REVERSE</button>
-            <button class="btn btn-orange" style="padding:4px 8px; font-size:11px;" id="btnSliceToPads">&#9986; SLICE TO PADS (16)</button>
+            <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnNormalizeSample">
+              <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="3" x2="20" y2="3"/>
+                <line x1="4" y1="21" x2="20" y2="21"/>
+                <polyline points="9 8 12 5 15 8"/>
+                <line x1="12" y1="5" x2="12" y2="12"/>
+                <polyline points="9 16 12 19 15 16"/>
+                <line x1="12" y1="12" x2="12" y2="19"/>
+              </svg>
+              <span>NORMALIZE</span>
+            </button>
+            <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnReverseSample">
+              <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 7h12m0 0l-4-4m4 4l-4 4m-4 6H4m0 0l4-4m-4 4l4 4"/>
+              </svg>
+              <span>REVERSE</span>
+            </button>
+            <button class="btn btn-orange" style="padding:4px 8px; font-size:11px;" id="btnSliceToPads">
+              <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h3l2-6 3 12 3-8 2 5 2-3h3"/>
+                <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" stroke-dasharray="2 2"/>
+              </svg>
+              <span>SLICE TO PADS (16)</span>
+            </button>
           </div>
         </div>
 
@@ -985,21 +1549,62 @@
     </section>
 
     <!-- LOWER ROW: 4X4 PADS MATRIX & 16-STEP SEQUENCER -->
-    <section class="bottom-studio-grid">
+    <section class="bottom-studio-grid" id="bottomStudioGrid">
 
       <!-- LEFT: 16 SILICONE PADS & BANK SELECTOR -->
-      <div class="hardware-card pads-section">
+      <div class="hardware-card pads-section" id="padsSectionCard">
         <div class="bank-bar">
-          <div style="font-size:11px; font-weight:800; color:#8ba0b5;">BANK SELECT:</div>
-          <div class="bank-btn-group">
-            <button class="bank-btn active" data-bank="A">A</button>
-            <button class="bank-btn" data-bank="B">B</button>
-            <button class="bank-btn" data-bank="C">C</button>
-            <button class="bank-btn" data-bank="D">D</button>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="mode-toggle-group">
+              <button class="mode-toggle-btn active" id="btnModePads">
+                <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="8.6" y="3" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="14.2" y="3" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="19.8" y="3" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="3" y="8.6" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="8.6" y="8.6" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="14.2" y="8.6" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="19.8" y="8.6" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="3" y="14.2" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="8.6" y="14.2" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="14.2" y="14.2" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="19.8" y="14.2" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="3" y="19.8" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="8.6" y="19.8" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="14.2" y="19.8" width="3.8" height="3.8" rx="0.8"/>
+                  <rect x="19.8" y="19.8" width="3.8" height="3.8" rx="0.8"/>
+                </svg>
+                <span>16 PADS</span>
+              </button>
+              <button class="mode-toggle-btn" id="btnModeChromatic">
+                <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <line x1="7" y1="4" x2="7" y2="20"/>
+                  <line x1="12" y1="4" x2="12" y2="20"/>
+                  <line x1="17" y1="4" x2="17" y2="20"/>
+                  <rect x="5.2" y="4" width="3.6" height="9" fill="currentColor"/>
+                  <rect x="10.2" y="4" width="3.6" height="9" fill="currentColor"/>
+                  <rect x="15.2" y="4" width="3.6" height="9" fill="currentColor"/>
+                </svg>
+                <span>CHROMATIC KEYS</span>
+              </button>
+            </div>
+            <div class="bank-btn-group" id="bankBtnGroup">
+              <button class="bank-btn active" data-bank="A">A</button>
+              <button class="bank-btn" data-bank="B">B</button>
+              <button class="bank-btn" data-bank="C">C</button>
+              <button class="bank-btn" data-bank="D">D</button>
+            </div>
           </div>
           <div style="display:flex; gap:6px;">
             <label class="btn" style="padding:4px 8px; font-size:10px; cursor:pointer;">
-              &#128194; LOAD SOUND
+              <svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                <polyline points="16 7 12 3 8 7"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>LOAD SOUND</span>
               <input type="file" id="fileSampleInput" accept="audio/*" style="display:none;">
             </label>
           </div>
@@ -1010,10 +1615,63 @@
           <!-- 16 Pads generated dynamically in script -->
         </div>
 
+        <!-- CHROMATIC PIANO KEYBOARD VIEW -->
+        <div class="chromatic-panel" id="chromaticPanel" style="display:none;">
+          <div class="chromatic-toolbar">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="color:#7d8c9e; font-size:10px; font-weight:700;">VOICE:</span>
+              <span id="chromaticSoundName" style="color:var(--accent-orange); font-weight:800;">PAD 01: 808 SUB KICK</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button class="btn" style="padding:2px 7px; font-size:10px;" id="btnOctDown">
+                <svg class="ui-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>OCT &minus;</span>
+              </button>
+              <span class="badge-pill" id="chromaticOctLabel" style="color:var(--accent-cyan); font-size:10px;">OCT: C3 (Root)</span>
+              <button class="btn" style="padding:2px 7px; font-size:10px;" id="btnOctUp">
+                <svg class="ui-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>OCT +</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- MINI PADS PICKER -->
+          <div>
+            <div style="font-size:9px; color:#7d8c9e; margin-bottom:4px; font-family:var(--font-mono); text-transform:uppercase;">MUESTRA O VOZ ACTIVA:</div>
+            <div class="mini-pads-picker" id="miniPadsPicker">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- 25-KEY VIRTUAL PIANO -->
+          <div>
+            <div class="piano-keys-container" id="pianoKeysBed">
+              <!-- Rendered dynamically in JS -->
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:10px; color:var(--text-dim); font-family:var(--font-mono);">
+              <span>Teclas PC: [A]-[L] teclas blancas &bull; [W,E,T,Y,U,O,P] teclas negras</span>
+              <span>Octava: [Z] bajar / [X] subir</span>
+            </div>
+          </div>
+        </div>
+
         <!-- SAMPLING DOCK (LIVE MIC / LINE INPUT SAMPLER) -->
         <div class="sampling-dock">
           <div style="display:flex; align-items:center; gap:8px;">
-            <button class="btn btn-rec" id="btnLiveRecord">&#127908; SAMPLE MIC</button>
+            <button class="btn btn-rec" id="btnLiveRecord">
+              <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="2" width="6" height="12" rx="3"/>
+                <path d="M5 10a7 7 0 0 0 14 0"/>
+                <line x1="12" y1="17" x2="12" y2="22"/>
+                <line x1="8" y1="22" x2="16" y2="22"/>
+              </svg>
+              <span>SAMPLE MIC</span>
+            </button>
             <span style="font-size:11px; font-weight:700;" id="samplingStatus">IDLE</span>
           </div>
           <div class="input-meter-wrap">
@@ -1025,31 +1683,71 @@
         </div>
       </div>
 
+      <!-- INTERACTIVE SPLITTER -->
+      <div class="layout-splitter" id="layoutSplitter" title="Arrastra con el mouse para cambiar el ancho (Doble clic para 50/50)">
+        <div class="splitter-handle"></div>
+      </div>
+
       <!-- RIGHT: 16-STEP SEQUENCER & PATTERN BUILDER -->
-      <div class="hardware-card sequencer-card">
+      <div class="hardware-card sequencer-card" id="sequencerSectionCard">
         <div class="card-title-bar">
           <div class="card-title">
             <span class="dot" style="background:var(--accent-green); box-shadow:0 0 8px var(--accent-green);"></span>
             16-STEP GROOVE SEQUENCER
           </div>
-          <div style="display:flex; gap:6px;">
-            <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnClearTrack">CLEAR TRACK</button>
-            <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnClearPattern">CLEAR ALL</button>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="mode-toggle-group">
+              <button class="mode-toggle-btn active" id="btnSeqViewSingle">
+                <svg class="ui-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                <span>1 TRACK</span>
+              </button>
+              <button class="mode-toggle-btn" id="btnSeqViewMulti">
+                <svg class="ui-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>MULTI-TRACK (GRID)</span>
+              </button>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnClearTrack">
+                <svg class="ui-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <span>CLEAR TRACK</span>
+              </button>
+              <button class="btn" style="padding:4px 8px; font-size:11px;" id="btnClearPattern">
+                <svg class="ui-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <span>CLEAR ALL</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="seq-track-header">
-          <div class="seq-active-track-name" id="seqCurrentTrackName">
-            TRACK: PAD 01 - 808 SUB KICK
+        <!-- SINGLE TRACK CONTAINER -->
+        <div id="singleTrackContainer">
+          <div class="seq-track-header">
+            <div class="seq-active-track-name" id="seqCurrentTrackName">
+              TRACK: PAD 01 - 808 SUB KICK
+            </div>
+            <div style="font-size:11px; font-family:var(--font-mono); color:var(--text-dim);">
+              16 STEPS &bull; 4/4 QUANTIZE
+            </div>
           </div>
-          <div style="font-size:11px; font-family:var(--font-mono); color:var(--text-dim);">
-            16 STEPS &bull; 4/4 QUANTIZE
+
+          <!-- 16 STEP MATRIX -->
+          <div class="steps-grid-16" id="stepsGrid16">
+            <!-- 16 Step columns rendered by JS -->
           </div>
         </div>
 
-        <!-- 16 STEP MATRIX -->
-        <div class="steps-grid-16" id="stepsGrid16">
-          <!-- 16 Step columns rendered by JS -->
+        <!-- MULTI-TRACK (GRID) CONTAINER -->
+        <div id="multiTrackContainer" class="multitrack-wrapper" style="display:none;">
+          <div class="multitrack-scroll-area">
+            <div class="multitrack-header-row" id="multiTrackHeaderRow"></div>
+            <div id="multiTrackRowsContainer"></div>
+          </div>
         </div>
 
         <!-- MIDI & SYSTEM STATUS BAR -->
@@ -1064,7 +1762,7 @@
 
   <!-- FOOTER -->
   <footer>
-    <div>AGY-SAMPLER STUDIO PRO &bull; 64-Bit Float Web Audio API &bull; 100% Self-Contained Offline Architecture</div>
+    <div>CDC-SAMPLER STUDIO PRO &bull; 64-Bit Float Web Audio API &bull; 100% Self-Contained Offline Architecture</div>
     <div style="display:flex; gap:8px;">
       <span class="badge-pill">Web Audio 64-bit</span>
       <span class="badge-pill">Transient Slicer</span>
@@ -1132,8 +1830,24 @@
     let selectedPadIndex = 0;
     let activeBank = 'A';
 
+    // Play Mode State: 'pads' or 'chromatic'
+    let currentPlayMode = 'pads';
+    let chromaticOctaveOffset = 0; // -2 to +2 octaves (relative to C3 / MIDI 60)
+    const activePressedKeys = new Set();
+
     // 16 Patterns for the 16 pads, each has 16 steps
     const patternGrid = Array.from({ length: 16 }, () => Array(16).fill(false));
+    const trackMutes = new Array(16).fill(false);
+    const trackSolos = new Array(16).fill(false);
+    let currentSeqView = 'single';
+
+    // UI Vector Icon SVGs for dynamic DOM updates
+    const UI_ICONS = {
+      play: '<svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+      pause: '<svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
+      stop: '<svg class="ui-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>',
+      mic: '<svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>'
+    };
 
     /* =========================================================================
        2. PROCEDURAL SOUND SYNTHESIZER (100% Offline Factory Sound Bank)
@@ -1178,45 +1892,44 @@
             break;
           }
           case 'Analog Clap': {
-            let clap = 0;
-            const env = Math.exp(-t * 14);
-            const burst = (Math.random() * 2 - 1);
-            if (t < 0.015 || (t > 0.03 && t < 0.045) || (t > 0.06 && t < 0.075) || t > 0.09) {
-              clap = burst * env;
-            }
-            data[i] = clap * 0.85;
+            let env = 0;
+            if (t < 0.01) env = 1;
+            else if (t < 0.02) env = 0.8;
+            else if (t < 0.03) env = 0.7;
+            else env = Math.exp(-(t - 0.03) * 16);
+            data[i] = (Math.random() * 2 - 1) * env * 0.9;
             break;
           }
           case 'Closed Hat': {
             const noise = (Math.random() * 2 - 1);
-            const env = Math.exp(-t * 45);
-            data[i] = noise * env * 0.6;
+            const env = Math.exp(-t * 65);
+            data[i] = noise * env * 0.7;
             break;
           }
           case 'Open Hat': {
             const noise = (Math.random() * 2 - 1);
-            const env = Math.exp(-t * 5);
-            data[i] = noise * env * 0.55;
+            const env = Math.exp(-t * 7);
+            data[i] = noise * env * 0.65;
             break;
           }
           case 'Pedal Hat': {
             const noise = (Math.random() * 2 - 1);
-            const env = Math.exp(-t * 28);
-            data[i] = noise * env * 0.5;
+            const env = Math.exp(-t * 30);
+            data[i] = noise * env * 0.6;
             break;
           }
           case 'Low Tom': {
-            const freq = 120 * Math.exp(-t * 12) + 70;
-            data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 6) * 0.8;
+            const freq = 110 * Math.exp(-t * 12) + 65;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 8) * 0.8;
             break;
           }
           case 'Mid Tom': {
-            const freq = 180 * Math.exp(-t * 12) + 110;
-            data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 7) * 0.8;
+            const freq = 160 * Math.exp(-t * 12) + 90;
+            data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 8) * 0.8;
             break;
           }
           case 'High Tom': {
-            const freq = 260 * Math.exp(-t * 14) + 160;
+            const freq = 220 * Math.exp(-t * 12) + 130;
             data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 8) * 0.8;
             break;
           }
@@ -1259,7 +1972,7 @@
     }
 
     /* =========================================================================
-       3. INITIALIZE WEB AUDIO & MASTER DSP GRAPH
+       3. WEB AUDIO GRAPH INITIALIZATION & MASTER RACK
        ========================================================================= */
     async function initAudio() {
       if (audioCtx) {
@@ -1267,67 +1980,68 @@
         return;
       }
 
-      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-      audioCtx = new AudioCtxClass({ latencyHint: 'interactive' });
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContextClass({ latencyHint: 'interactive' });
 
-      // Master Chain
+      // Master Output Nodes
       masterGainNode = audioCtx.createGain();
-      masterGainNode.gain.value = 0.9;
+      masterGainNode.gain.value = 0.85;
 
-      masterAnalyzerNode = audioCtx.createAnalyser();
-      masterAnalyzerNode.fftSize = 256;
-
+      // Master Compressor (VCA Bus Comp)
       masterCompNode = audioCtx.createDynamicsCompressor();
-      masterCompNode.threshold.value = -14;
-      masterCompNode.knee.value = 6;
-      masterCompNode.ratio.value = 4;
-      masterCompNode.attack.value = 0.005;
-      masterCompNode.release.value = 0.15;
+      masterCompNode.threshold.setValueAtTime(-18, audioCtx.currentTime);
+      masterCompNode.knee.setValueAtTime(6, audioCtx.currentTime);
+      masterCompNode.ratio.setValueAtTime(4, audioCtx.currentTime);
+      masterCompNode.attack.setValueAtTime(0.005, audioCtx.currentTime);
+      masterCompNode.release.setValueAtTime(0.2, audioCtx.currentTime);
 
+      // Brickwall Peak Limiter (Hard safety)
       masterLimiterNode = audioCtx.createDynamicsCompressor();
-      masterLimiterNode.threshold.value = -0.5;
-      masterLimiterNode.ratio.value = 20;
+      masterLimiterNode.threshold.setValueAtTime(-1.0, audioCtx.currentTime);
+      masterLimiterNode.ratio.setValueAtTime(20, audioCtx.currentTime);
+      masterLimiterNode.attack.setValueAtTime(0.001, audioCtx.currentTime);
+      masterLimiterNode.release.setValueAtTime(0.05, audioCtx.currentTime);
 
-      // Tape Saturation Shaper
+      // Tape Saturation Waveshaper
       tapeShaperNode = audioCtx.createWaveShaper();
       tapeShaperNode.curve = makeTapeSaturationCurve(0.15);
-      tapeShaperNode.oversample = '4x';
+      tapeShaperNode.oversample = '2x';
 
-      // Send FX: Delay
+      // Master Stereo BPM Delay Send
       delaySendNode = audioCtx.createGain();
+      delaySendNode.gain.value = 0.2;
+      const delayNode = audioCtx.createDelay(2.0);
+      delayNode.delayTime.value = 0.25; // 1/8 note @ 120bpm
+      const delayFeedback = audioCtx.createGain();
+      delayFeedback.gain.value = 0.35;
       delayReturnNode = audioCtx.createGain();
-      const delayNode = audioCtx.createDelay();
-      const delayFbkNode = audioCtx.createGain();
-      const delayFilter = audioCtx.createBiquadFilter();
-
-      delayNode.delayTime.value = (60 / bpm) * 0.5; // 8th note
-      delayFbkNode.gain.value = 0.45;
-      delayFilter.type = 'lowpass';
-      delayFilter.frequency.value = 3500;
+      delayReturnNode.gain.value = 0.2;
 
       delaySendNode.connect(delayNode);
-      delayNode.connect(delayFilter);
-      delayFilter.connect(delayFbkNode);
-      delayFbkNode.connect(delayNode);
-      delayFilter.connect(delayReturnNode);
+      delayNode.connect(delayFeedback);
+      delayFeedback.connect(delayNode);
+      delayNode.connect(delayReturnNode);
+      delayReturnNode.connect(masterGainNode);
 
-      // Send FX: Algorithmic Reverb
+      // Master Convolutive Space Reverb
       reverbSendNode = audioCtx.createGain();
+      reverbSendNode.gain.value = 0.25;
+      const reverbConvolver = audioCtx.createConvolver();
+      reverbConvolver.buffer = buildSyntheticReverbIR(2.5, 2.0);
       reverbReturnNode = audioCtx.createGain();
-      const convolver = audioCtx.createConvolver();
-      convolver.buffer = buildSyntheticReverbIR(1.8, 0.02);
-      reverbSendNode.connect(convolver);
-      convolver.connect(reverbReturnNode);
-
-      // Connect Aux and Master Bus
-      delayReturnNode.gain.value = 0.2;
       reverbReturnNode.gain.value = 0.25;
 
+      reverbSendNode.connect(reverbConvolver);
+      reverbConvolver.connect(reverbReturnNode);
+      reverbReturnNode.connect(masterGainNode);
+
+      // Master FFT Analyzer (OLED Visualizer)
+      masterAnalyzerNode = audioCtx.createAnalyser();
+      masterAnalyzerNode.fftSize = 128;
+
+      // Master Audio Routing
       masterGainNode.connect(tapeShaperNode);
       tapeShaperNode.connect(masterCompNode);
-      delayReturnNode.connect(masterCompNode);
-      reverbReturnNode.connect(masterCompNode);
-
       masterCompNode.connect(masterLimiterNode);
       masterLimiterNode.connect(masterAnalyzerNode);
       masterAnalyzerNode.connect(audioCtx.destination);
@@ -1337,6 +2051,9 @@
       renderPadGrid();
       renderStepGrid();
       drawActiveWaveform();
+      renderPianoKeyboard();
+      renderMiniPadsPicker();
+      updateChromaticSoundDisplay();
       setupMIDI();
     }
 
@@ -1400,7 +2117,8 @@
           lfoRate: 2.0,
           lfoDepth: 0,
           lfoDest: 'none',
-          activeVoice: null
+          activeVoice: null,
+          activeVoices: new Map()
         });
       }
 
@@ -1420,46 +2138,64 @@
       patternGrid[4][12] = true;
     }
 
-    // Trigger Pad Voice
-    function playPad(padIndex, velocity = 1.0, time = 0) {
+    // Trigger Pad Voice (Supports velocity, timing, semitone offset and polyphonic voice keys)
+    function playPad(padIndex, velocity = 1.0, time = 0, semitoneOffset = 0, voiceKey = null) {
       if (!audioCtx) return;
       const pad = pads[padIndex];
       if (!pad || !pad.buffer) return;
 
       const triggerTime = time > 0 ? time : audioCtx.currentTime;
 
-      // Handle Choke Group
-      if (pad.chokeGroup > 0) {
+      // Handle Choke Group (only in normal drum pad mode)
+      if (pad.chokeGroup > 0 && voiceKey === null) {
         pads.forEach(p => {
-          if (p.chokeGroup === pad.chokeGroup && p.activeVoice) {
-            try {
-              p.activeVoice.gainNode.gain.cancelScheduledValues(triggerTime);
-              p.activeVoice.gainNode.gain.setValueAtTime(p.activeVoice.gainNode.gain.value, triggerTime);
-              p.activeVoice.gainNode.gain.exponentialRampToValueAtTime(0.0001, triggerTime + 0.015);
-              p.activeVoice.source.stop(triggerTime + 0.02);
-            } catch (e) {}
+          if (p.chokeGroup === pad.chokeGroup && p.activeVoices) {
+            p.activeVoices.forEach((v) => {
+              try {
+                v.gainNode.gain.cancelScheduledValues(triggerTime);
+                v.gainNode.gain.setValueAtTime(v.gainNode.gain.value, triggerTime);
+                v.gainNode.gain.exponentialRampToValueAtTime(0.0001, triggerTime + 0.015);
+                v.source.stop(triggerTime + 0.02);
+              } catch (e) {}
+            });
+            p.activeVoices.clear();
             p.activeVoice = null;
           }
         });
       }
 
-      // Stop previous voice if mono
-      if (pad.activeVoice) {
+      if (!pad.activeVoices) pad.activeVoices = new Map();
+
+      // If voiceKey is supplied and already sounding, stop previous cleanly
+      if (voiceKey && pad.activeVoices.has(voiceKey)) {
+        const oldV = pad.activeVoices.get(voiceKey);
         try {
-          pad.activeVoice.gainNode.gain.cancelScheduledValues(triggerTime);
-          pad.activeVoice.gainNode.gain.setValueAtTime(pad.activeVoice.gainNode.gain.value, triggerTime);
-          pad.activeVoice.gainNode.gain.exponentialRampToValueAtTime(0.0001, triggerTime + 0.01);
-          pad.activeVoice.source.stop(triggerTime + 0.015);
+          oldV.gainNode.gain.cancelScheduledValues(triggerTime);
+          oldV.gainNode.gain.setValueAtTime(oldV.gainNode.gain.value, triggerTime);
+          oldV.gainNode.gain.exponentialRampToValueAtTime(0.0001, triggerTime + 0.01);
+          oldV.source.stop(triggerTime + 0.015);
         } catch (e) {}
-        pad.activeVoice = null;
+        pad.activeVoices.delete(voiceKey);
+      } else if (!voiceKey) {
+        // Mono pad retrigger behavior when not playing keys
+        pad.activeVoices.forEach((oldV) => {
+          try {
+            oldV.gainNode.gain.cancelScheduledValues(triggerTime);
+            oldV.gainNode.gain.setValueAtTime(oldV.gainNode.gain.value, triggerTime);
+            oldV.gainNode.gain.exponentialRampToValueAtTime(0.0001, triggerTime + 0.01);
+            oldV.source.stop(triggerTime + 0.015);
+          } catch (e) {}
+        });
+        pad.activeVoices.clear();
       }
 
       // Create Buffer Source
       const source = audioCtx.createBufferSource();
       source.buffer = pad.buffer;
 
-      // Pitch calculation: 2^(semitones / 12)
-      const playbackRate = Math.pow(2, pad.tune / 12);
+      // Pitch calculation: 2^((pad.tune + semitoneOffset) / 12)
+      const effectiveTune = (pad.tune || 0) + semitoneOffset;
+      const playbackRate = Math.max(0.05, Math.min(16, Math.pow(2, effectiveTune / 12)));
       source.playbackRate.setValueAtTime(playbackRate, triggerTime);
 
       // Looping
@@ -1508,7 +2244,16 @@
 
       source.start(triggerTime, offset, pad.playMode === 'loop' ? undefined : duration);
 
-      pad.activeVoice = { source, gainNode, filterNode, pannerNode, triggerTime };
+      const voice = { source, gainNode, filterNode, pannerNode, triggerTime };
+      const currentVoiceKey = voiceKey || `pad_${padIndex}_${Date.now()}_${Math.random()}`;
+      pad.activeVoices.set(currentVoiceKey, voice);
+      pad.activeVoice = voice;
+
+      source.onended = () => {
+        if (pad.activeVoices && pad.activeVoices.has(currentVoiceKey)) {
+          pad.activeVoices.delete(currentVoiceKey);
+        }
+      };
 
       // UI Flash animation
       flashPadUI(padIndex);
@@ -1519,16 +2264,34 @@
       }
     }
 
-    function stopPadVoice(padIndex) {
+    function stopPadVoice(padIndex, voiceKey = null) {
       const pad = pads[padIndex];
-      if (pad && pad.activeVoice && pad.playMode === 'gate') {
-        const now = audioCtx.currentTime;
-        try {
-          pad.activeVoice.gainNode.gain.cancelScheduledValues(now);
-          pad.activeVoice.gainNode.gain.setValueAtTime(pad.activeVoice.gainNode.gain.value, now);
-          pad.activeVoice.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + pad.ampR);
-          pad.activeVoice.source.stop(now + pad.ampR + 0.05);
-        } catch (e) {}
+      if (!pad || !pad.activeVoices) return;
+
+      const now = audioCtx.currentTime;
+      const releaseTime = Math.max(0.015, pad.ampR || 0.1);
+
+      if (voiceKey !== null) {
+        if (pad.activeVoices.has(voiceKey)) {
+          const v = pad.activeVoices.get(voiceKey);
+          try {
+            v.gainNode.gain.cancelScheduledValues(now);
+            v.gainNode.gain.setValueAtTime(v.gainNode.gain.value, now);
+            v.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
+            v.source.stop(now + releaseTime + 0.05);
+          } catch (e) {}
+          pad.activeVoices.delete(voiceKey);
+        }
+      } else if (pad.playMode === 'gate' || currentPlayMode === 'chromatic') {
+        pad.activeVoices.forEach((v) => {
+          try {
+            v.gainNode.gain.cancelScheduledValues(now);
+            v.gainNode.gain.setValueAtTime(v.gainNode.gain.value, now);
+            v.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
+            v.source.stop(now + releaseTime + 0.05);
+          } catch (e) {}
+        });
+        pad.activeVoices.clear();
         pad.activeVoice = null;
       }
     }
@@ -1561,10 +2324,14 @@
     }
 
     function scheduleStep(stepNumber, time) {
+      const hasAnySolo = trackSolos.some(s => s);
       // Trigger all active pads for this step
       for (let p = 0; p < 16; p++) {
         if (patternGrid[p][stepNumber]) {
-          playPad(p, 1.0, time);
+          const isAllowed = hasAnySolo ? (trackSolos[p] && !trackMutes[p]) : !trackMutes[p];
+          if (isAllowed) {
+            playPad(p, 1.0, time);
+          }
         }
       }
 
@@ -1595,14 +2362,14 @@
         isPlaying = false;
         clearTimeout(timerID);
         btn.classList.remove('active');
-        btn.innerHTML = '&#9654; PLAY';
+        btn.innerHTML = `${UI_ICONS.play} <span>PLAY</span>`;
         resetStepLedUI();
       } else {
         isPlaying = true;
         currentStep = 0;
         nextNoteTime = audioCtx.currentTime + 0.05;
         btn.classList.add('active');
-        btn.innerHTML = '&#9208; PAUSE';
+        btn.innerHTML = `${UI_ICONS.pause} <span>PAUSE</span>`;
         scheduler();
       }
     }
@@ -1613,7 +2380,7 @@
       currentStep = 0;
       const btn = document.getElementById('btnPlaySeq');
       btn.classList.remove('active');
-      btn.innerHTML = '&#9654; PLAY';
+      btn.innerHTML = `${UI_ICONS.play} <span>PLAY</span>`;
       resetStepLedUI();
     }
 
@@ -1720,7 +2487,7 @@
         }
         isRecordingLive = false;
         btn.classList.remove('active');
-        btn.innerHTML = '&#127908; SAMPLE MIC';
+        btn.innerHTML = `${UI_ICONS.mic} <span>SAMPLE MIC</span>`;
         statusEl.textContent = 'PROCESANDO...';
         return;
       }
@@ -1751,6 +2518,8 @@
 
           renderPadGrid();
           drawActiveWaveform();
+          if (typeof renderMiniPadsPicker === 'function') renderMiniPadsPicker();
+          if (typeof updateChromaticSoundDisplay === 'function') updateChromaticSoundDisplay();
           statusEl.textContent = 'SAMPLE CARGADO!';
           setTimeout(() => statusEl.textContent = 'IDLE', 2000);
         };
@@ -1765,7 +2534,7 @@
         mediaRecorder.start();
         isRecordingLive = true;
         btn.classList.add('active');
-        btn.innerHTML = '&#9209; STOP RECORD';
+        btn.innerHTML = `${UI_ICONS.stop} <span>STOP RECORD</span>`;
         statusEl.textContent = 'GRABANDO...';
       } catch (err) {
         alert('No se pudo acceder al micrófono: ' + err.message);
@@ -1811,6 +2580,10 @@
           const stepTime = barStartTime + s * ((60 / bpm) * 0.25);
           for (let p = 0; p < 16; p++) {
             if (patternGrid[p][s]) {
+              const hasAnySolo = trackSolos.some(s => s);
+              const isAllowed = hasAnySolo ? (trackSolos[p] && !trackMutes[p]) : !trackMutes[p];
+              if (!isAllowed) continue;
+
               const pad = pads[p];
               const src = offlineCtx.createBufferSource();
               src.buffer = pad.buffer;
@@ -1833,7 +2606,7 @@
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `AGY_Sampler_Mix_${Date.now()}.wav`;
+      a.download = `CDC_Sampler_Mix_${Date.now()}.wav`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -2051,10 +2824,37 @@
       renderStepGrid();
       drawActiveWaveform();
       syncKnobsToActivePad();
+      if (typeof updateChromaticSoundDisplay === 'function') {
+        updateChromaticSoundDisplay();
+      }
+      document.querySelectorAll('.multitrack-row').forEach((r, i) => {
+        r.classList.toggle('active-pad-row', i === idx);
+      });
+    }
+
+    function setSeqView(view) {
+      currentSeqView = view;
+      const isMulti = view === 'multitrack';
+      const btnSingle = document.getElementById('btnSeqViewSingle');
+      const btnMulti = document.getElementById('btnSeqViewMulti');
+      if (btnSingle) btnSingle.classList.toggle('active', !isMulti);
+      if (btnMulti) btnMulti.classList.toggle('active', isMulti);
+
+      const singleContainer = document.getElementById('singleTrackContainer');
+      const multiContainer = document.getElementById('multiTrackContainer');
+      if (singleContainer) singleContainer.style.display = isMulti ? 'none' : 'block';
+      if (multiContainer) multiContainer.style.display = isMulti ? 'flex' : 'none';
+
+      if (isMulti) {
+        renderMultiTrackGrid();
+      } else {
+        renderStepGrid();
+      }
     }
 
     function renderStepGrid() {
       const grid = document.getElementById('stepsGrid16');
+      if (!grid) return;
       grid.innerHTML = '';
 
       for (let s = 0; s < 16; s++) {
@@ -2070,6 +2870,8 @@
         btn.addEventListener('click', () => {
           patternGrid[selectedPadIndex][s] = !patternGrid[selectedPadIndex][s];
           btn.classList.toggle('active', patternGrid[selectedPadIndex][s]);
+          const mtBtn = document.getElementById(`mtStepBtn_${selectedPadIndex}_${s}`);
+          if (mtBtn) mtBtn.classList.toggle('active', patternGrid[selectedPadIndex][s]);
         });
 
         const num = document.createElement('div');
@@ -2083,10 +2885,110 @@
       }
     }
 
+    function renderMultiTrackGrid() {
+      const headerRow = document.getElementById('multiTrackHeaderRow');
+      const rowsContainer = document.getElementById('multiTrackRowsContainer');
+      if (!headerRow || !rowsContainer) return;
+
+      // Header Row with Step Numbers & Running LEDs
+      headerRow.innerHTML = '<div class="multitrack-header-title">16 TRACKS &bull; PADS 01-16</div>';
+      for (let s = 0; s < 16; s++) {
+        const colHead = document.createElement('div');
+        colHead.className = 'multitrack-col-head';
+        colHead.innerHTML = `
+          <div class="multitrack-step-led" id="mtLed_${s}"></div>
+          <span>${s + 1}</span>
+        `;
+        headerRow.appendChild(colHead);
+      }
+
+      // 16 Instrument Rows
+      rowsContainer.innerHTML = '';
+      for (let p = 0; p < 16; p++) {
+        const pad = pads[p];
+        const row = document.createElement('div');
+        row.className = `multitrack-row ${p === selectedPadIndex ? 'active-pad-row' : ''} ${trackMutes[p] ? 'muted' : ''}`;
+        row.id = `mtRow_${p}`;
+
+        // Left info column (Pad number, sound name, Mute/Solo)
+        const infoCol = document.createElement('div');
+        infoCol.className = 'multitrack-row-info';
+
+        const padNum = document.createElement('span');
+        padNum.className = 'multitrack-pad-num';
+        padNum.textContent = String(p + 1).padStart(2, '0');
+
+        const padName = document.createElement('span');
+        padName.className = 'multitrack-row-name';
+        padName.textContent = pad ? pad.name : `Pad ${p + 1}`;
+        padName.title = `Pad ${p + 1}: ${pad ? pad.name : ''} (Clic para seleccionar y esculpir sonido)`;
+
+        infoCol.appendChild(padNum);
+        infoCol.appendChild(padName);
+
+        // Clicking info selects the pad
+        infoCol.addEventListener('click', () => {
+          selectPad(p);
+        });
+
+        // Mute & Solo buttons
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'multitrack-track-btns';
+
+        const muteBtn = document.createElement('button');
+        muteBtn.className = `track-btn btn-mute ${trackMutes[p] ? 'active' : ''}`;
+        muteBtn.textContent = 'M';
+        muteBtn.title = 'Mute pista';
+        muteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          trackMutes[p] = !trackMutes[p];
+          muteBtn.classList.toggle('active', trackMutes[p]);
+          row.classList.toggle('muted', trackMutes[p]);
+        });
+
+        const soloBtn = document.createElement('button');
+        soloBtn.className = `track-btn btn-solo ${trackSolos[p] ? 'active' : ''}`;
+        soloBtn.textContent = 'S';
+        soloBtn.title = 'Solo pista';
+        soloBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          trackSolos[p] = !trackSolos[p];
+          soloBtn.classList.toggle('active', trackSolos[p]);
+        });
+
+        btnGroup.appendChild(muteBtn);
+        btnGroup.appendChild(soloBtn);
+        infoCol.appendChild(btnGroup);
+        row.appendChild(infoCol);
+
+        // 16 Step Buttons
+        for (let s = 0; s < 16; s++) {
+          const stepBtn = document.createElement('button');
+          const isBeatStart = (s % 4 === 0);
+          stepBtn.className = `multitrack-step-btn ${isBeatStart ? 'beat-start' : ''} ${patternGrid[p][s] ? 'active' : ''}`;
+          stepBtn.id = `mtStepBtn_${p}_${s}`;
+          stepBtn.addEventListener('click', () => {
+            patternGrid[p][s] = !patternGrid[p][s];
+            stepBtn.classList.toggle('active', patternGrid[p][s]);
+            if (p === selectedPadIndex) {
+              const singleBtn = document.getElementById('stepsGrid16')?.children[s]?.querySelector('.step-btn');
+              if (singleBtn) singleBtn.classList.toggle('active', patternGrid[p][s]);
+            }
+          });
+          row.appendChild(stepBtn);
+        }
+
+        rowsContainer.appendChild(row);
+      }
+    }
+
     function updateStepLedUI(step) {
       for (let s = 0; s < 16; s++) {
+        const isCur = (s === step);
         const led = document.getElementById(`stepLed_${s}`);
-        if (led) led.classList.toggle('current-step', s === step);
+        if (led) led.classList.toggle('current-step', isCur);
+        const mtLed = document.getElementById(`mtLed_${s}`);
+        if (mtLed) mtLed.classList.toggle('current-step', isCur);
       }
     }
 
@@ -2094,6 +2996,8 @@
       for (let s = 0; s < 16; s++) {
         const led = document.getElementById(`stepLed_${s}`);
         if (led) led.classList.remove('current-step');
+        const mtLed = document.getElementById(`mtLed_${s}`);
+        if (mtLed) mtLed.classList.remove('current-step');
       }
     }
 
@@ -2232,18 +3136,228 @@
     }
 
     /* =========================================================================
-       12. WEB MIDI API INTEGRATION
+       12. CHROMATIC PIANO KEYBOARD & POLYPHONIC ENGINE
+       ========================================================================= */
+    const PIANO_KEY_DATA = [];
+    (function initPianoKeyData() {
+      const NOTE_NAMES = [
+        { name: 'C', isBlack: false },
+        { name: 'C#', isBlack: true },
+        { name: 'D', isBlack: false },
+        { name: 'D#', isBlack: true },
+        { name: 'E', isBlack: false },
+        { name: 'F', isBlack: false },
+        { name: 'F#', isBlack: true },
+        { name: 'G', isBlack: false },
+        { name: 'G#', isBlack: true },
+        { name: 'A', isBlack: false },
+        { name: 'A#', isBlack: true },
+        { name: 'B', isBlack: false }
+      ];
+
+      let whiteIdx = 0;
+      // 4 Full Octaves: C2 (MIDI 48) to B5 (MIDI 95)
+      for (let oct = 2; oct <= 5; oct++) {
+        for (let n = 0; n < 12; n++) {
+          const noteInfo = NOTE_NAMES[n];
+          const midi = (oct * 12) + 24 + n;
+          const semitoneOffsetFromC3 = midi - 60;
+
+          if (noteInfo.isBlack) {
+            PIANO_KEY_DATA.push({
+              noteName: noteInfo.name,
+              octave: oct,
+              isBlack: true,
+              midi: midi,
+              semitoneOffset: semitoneOffsetFromC3,
+              whiteIdx: whiteIdx
+            });
+          } else {
+            PIANO_KEY_DATA.push({
+              noteName: noteInfo.name,
+              octave: oct,
+              isBlack: false,
+              midi: midi,
+              semitoneOffset: semitoneOffsetFromC3,
+              whiteIdx: whiteIdx
+            });
+            whiteIdx++;
+          }
+        }
+      }
+      // Top C6 (MIDI 96)
+      PIANO_KEY_DATA.push({
+        noteName: 'C',
+        octave: 6,
+        isBlack: false,
+        midi: 96,
+        semitoneOffset: 36,
+        whiteIdx: whiteIdx
+      });
+    })();
+
+    function renderPianoKeyboard() {
+      const bed = document.getElementById('pianoKeysBed');
+      if (!bed) return;
+      bed.innerHTML = '';
+
+      const baseMidi = 60 + (chromaticOctaveOffset * 12);
+      const HINT_MAP = {
+        0: 'A', 1: 'W', 2: 'S', 3: 'E', 4: 'D', 5: 'F',
+        6: 'T', 7: 'G', 8: 'Y', 9: 'H', 10: 'U', 11: 'J',
+        12: 'K', 13: 'O', 14: 'L', 15: 'P', 16: 'Ñ', 17: "'"
+      };
+
+      PIANO_KEY_DATA.forEach(k => {
+        const keyEl = document.createElement('div');
+        const fullNoteName = `${k.noteName}${k.octave}`;
+        const semitoneFromBase = k.midi - baseMidi;
+        const keyHint = HINT_MAP[semitoneFromBase] || '';
+
+        keyEl.className = `piano-key ${k.isBlack ? 'black-key' : 'white-key'}`;
+        keyEl.dataset.midi = k.midi;
+        keyEl.id = `pianoKey_${k.midi}`;
+
+        if (k.isBlack) {
+          keyEl.style.left = `${(k.whiteIdx * 36) - 11}px`;
+        }
+
+        keyEl.innerHTML = `
+          <span class="key-note-name">${fullNoteName}</span>
+          ${keyHint ? `<span class="key-shortcut-hint">[${keyHint}]</span>` : ''}
+        `;
+
+        // Mouse click triggers
+        keyEl.addEventListener('mousedown', async (e) => {
+          e.preventDefault();
+          await initAudio();
+          playPad(selectedPadIndex, 0.95, 0, k.semitoneOffset, `mouse_${k.midi}`);
+          keyEl.classList.add('active');
+        });
+
+        const stopMouseNote = () => {
+          stopPadVoice(selectedPadIndex, `mouse_${k.midi}`);
+          keyEl.classList.remove('active');
+        };
+
+        keyEl.addEventListener('mouseup', stopMouseNote);
+        keyEl.addEventListener('mouseleave', stopMouseNote);
+
+        bed.appendChild(keyEl);
+      });
+
+      // Mouse wheel horizontal scroll
+      if (!bed._wheelAttached) {
+        bed.addEventListener('wheel', (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            bed.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+        bed._wheelAttached = true;
+      }
+
+      scrollToActiveOctave(false);
+    }
+
+    function scrollToActiveOctave(smooth = true) {
+      const bed = document.getElementById('pianoKeysBed');
+      if (!bed) return;
+      const baseMidi = 60 + (chromaticOctaveOffset * 12);
+      const activeKey = document.getElementById(`pianoKey_${baseMidi}`);
+      if (activeKey) {
+        const targetScroll = Math.max(0, activeKey.offsetLeft - 60);
+        bed.scrollTo({ left: targetScroll, behavior: smooth ? 'smooth' : 'auto' });
+      }
+    }
+
+    function highlightPianoKeyUI(midiNote, isActive) {
+      const el = document.getElementById(`pianoKey_${midiNote}`);
+      if (el) {
+        el.classList.toggle('active', isActive);
+      }
+    }
+
+    function renderMiniPadsPicker() {
+      const container = document.getElementById('miniPadsPicker');
+      if (!container) return;
+      container.innerHTML = '';
+      pads.forEach((p, i) => {
+        const btn = document.createElement('div');
+        btn.className = `mini-pad-btn ${i === selectedPadIndex ? 'active' : ''}`;
+        btn.id = `miniPadBtn_${i}`;
+        btn.textContent = `${String(i + 1).padStart(2, '0')}. ${p.name}`;
+        btn.title = `Pad ${i + 1}: ${p.name}`;
+        btn.addEventListener('click', () => {
+          selectPad(i);
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function updateChromaticSoundDisplay() {
+      const pad = pads[selectedPadIndex];
+      const nameEl = document.getElementById('chromaticSoundName');
+      if (nameEl && pad) {
+        nameEl.textContent = `PAD ${String(selectedPadIndex + 1).padStart(2, '0')}: ${pad.name}`;
+      }
+      document.querySelectorAll('.mini-pad-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === selectedPadIndex);
+      });
+    }
+
+    function shiftOctave(delta) {
+      chromaticOctaveOffset = Math.max(-2, Math.min(2, chromaticOctaveOffset + delta));
+      const baseOct = 3 + chromaticOctaveOffset;
+      const label = document.getElementById('chromaticOctLabel');
+      if (label) {
+        label.textContent = `OCT: C${baseOct} ${chromaticOctaveOffset === 0 ? '(Root)' : ''}`;
+      }
+      renderPianoKeyboard();
+    }
+
+    function setPlayMode(mode) {
+      currentPlayMode = mode;
+      const isChromatic = mode === 'chromatic';
+      document.getElementById('btnModePads').classList.toggle('active', !isChromatic);
+      document.getElementById('btnModeChromatic').classList.toggle('active', isChromatic);
+
+      document.getElementById('padMatrix').style.display = isChromatic ? 'none' : 'grid';
+      document.getElementById('chromaticPanel').style.display = isChromatic ? 'flex' : 'none';
+
+      const midiStatusEl = document.getElementById('midiStatus');
+      if (midiStatusEl) {
+        midiStatusEl.textContent = isChromatic ?
+          '● Web MIDI: Modo Teclado Cromático (Polifónico Activo)' :
+          '● Web MIDI: Modo 16 Pads (GM Drums)';
+      }
+
+      if (isChromatic) {
+        updateChromaticSoundDisplay();
+        renderPianoKeyboard();
+        renderMiniPadsPicker();
+      }
+    }
+
+    /* =========================================================================
+       13. WEB MIDI API INTEGRATION
        ========================================================================= */
     function setupMIDI() {
       if (navigator.requestMIDIAccess) {
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
       } else {
-        document.getElementById('midiStatus').textContent = 'Web MIDI no soportado en este navegador';
+        const status = document.getElementById('midiStatus');
+        if (status) status.textContent = 'Web MIDI no soportado en este navegador';
       }
     }
 
     function onMIDISuccess(midiAccess) {
-      document.getElementById('midiStatus').textContent = '● Web MIDI: Dispositivos detectados';
+      const status = document.getElementById('midiStatus');
+      if (status) {
+        status.textContent = currentPlayMode === 'chromatic' ?
+          '● Web MIDI: Modo Teclado Cromático (Polifónico Activo)' :
+          '● Web MIDI: Modo 16 Pads (Dispositivos Detectados)';
+      }
       for (let input of midiAccess.inputs.values()) {
         input.onmidimessage = handleMIDIMessage;
       }
@@ -2255,7 +3369,8 @@
     }
 
     function onMIDIFailure() {
-      document.getElementById('midiStatus').textContent = 'Web MIDI: Permiso denegado';
+      const status = document.getElementById('midiStatus');
+      if (status) status.textContent = 'Web MIDI: Permiso denegado';
     }
 
     function handleMIDIMessage(event) {
@@ -2263,22 +3378,35 @@
       const command = status >> 4;
 
       if (command === 9 && velocity > 0) {
-        // Note On (Default GM Drums starting at note 36 / C1)
-        const padIdx = (note - 36) % 16;
-        if (padIdx >= 0 && padIdx < 16) {
-          playPad(padIdx, velocity / 127);
+        // Note On
+        if (currentPlayMode === 'chromatic') {
+          // Chromatic mode: Note 60 is Root (C3 = 0 semitones relative to pad base tune)
+          const semitoneOffset = note - 60;
+          playPad(selectedPadIndex, velocity / 127, 0, semitoneOffset, `midi_${note}`);
+          highlightPianoKeyUI(note, true);
+        } else {
+          // Default GM Drums starting at note 36 / C1
+          const padIdx = (note - 36) % 16;
+          if (padIdx >= 0 && padIdx < 16) {
+            playPad(padIdx, velocity / 127);
+          }
         }
       } else if (command === 8 || (command === 9 && velocity === 0)) {
         // Note Off
-        const padIdx = (note - 36) % 16;
-        if (padIdx >= 0 && padIdx < 16) {
-          stopPadVoice(padIdx);
+        if (currentPlayMode === 'chromatic') {
+          stopPadVoice(selectedPadIndex, `midi_${note}`);
+          highlightPianoKeyUI(note, false);
+        } else {
+          const padIdx = (note - 36) % 16;
+          if (padIdx >= 0 && padIdx < 16) {
+            stopPadVoice(padIdx);
+          }
         }
       }
     }
 
     /* =========================================================================
-       13. KEYBOARD SHORTCUTS & EVENT LISTENERS
+       14. KEYBOARD SHORTCUTS & EVENT LISTENERS
        ========================================================================= */
     const KEY_TO_PAD = {
       'z': 0, 'x': 1, 'c': 2, 'v': 3,
@@ -2287,25 +3415,70 @@
       '1': 12, '2': 13, '3': 14, '4': 15
     };
 
+    const CHROMATIC_KEY_MAP = {
+      // White keys
+      'a': 0, 's': 2, 'd': 4, 'f': 5,
+      'g': 7, 'h': 9, 'j': 11, 'k': 12,
+      'l': 14, 'ñ': 16, ';': 16, "'": 17,
+      // Black keys
+      'w': 1, 'e': 3, 't': 6, 'y': 8,
+      'u': 10, 'o': 13, 'p': 15
+    };
+
     window.addEventListener('keydown', async (e) => {
       if (e.target.tagName === 'INPUT') return;
       const key = e.key.toLowerCase();
 
-      if (key in KEY_TO_PAD && !e.repeat) {
-        await initAudio();
-        const idx = KEY_TO_PAD[key];
-        selectPad(idx);
-        playPad(idx);
-      } else if (e.code === 'Space') {
+      if (e.code === 'Space') {
         e.preventDefault();
         togglePlay();
+        return;
+      }
+
+      if (currentPlayMode === 'chromatic') {
+        if (key === 'z') {
+          shiftOctave(-1);
+          return;
+        }
+        if (key === 'x') {
+          shiftOctave(1);
+          return;
+        }
+
+        if (key in CHROMATIC_KEY_MAP && !activePressedKeys.has(key)) {
+          activePressedKeys.add(key);
+          await initAudio();
+          const semitoneInOct = CHROMATIC_KEY_MAP[key];
+          const totalSemitone = semitoneInOct + (chromaticOctaveOffset * 12);
+          const midiNote = 60 + totalSemitone;
+          playPad(selectedPadIndex, 0.95, 0, totalSemitone, `key_${key}`);
+          highlightPianoKeyUI(midiNote, true);
+        }
+      } else {
+        if (key in KEY_TO_PAD && !e.repeat) {
+          await initAudio();
+          const idx = KEY_TO_PAD[key];
+          selectPad(idx);
+          playPad(idx);
+        }
       }
     });
 
     window.addEventListener('keyup', (e) => {
       const key = e.key.toLowerCase();
-      if (key in KEY_TO_PAD) {
-        stopPadVoice(KEY_TO_PAD[key]);
+      if (currentPlayMode === 'chromatic') {
+        if (key in CHROMATIC_KEY_MAP) {
+          activePressedKeys.delete(key);
+          const semitoneInOct = CHROMATIC_KEY_MAP[key];
+          const totalSemitone = semitoneInOct + (chromaticOctaveOffset * 12);
+          const midiNote = 60 + totalSemitone;
+          stopPadVoice(selectedPadIndex, `key_${key}`);
+          highlightPianoKeyUI(midiNote, false);
+        }
+      } else {
+        if (key in KEY_TO_PAD) {
+          stopPadVoice(KEY_TO_PAD[key]);
+        }
       }
     });
 
@@ -2340,6 +3513,8 @@
           pad.end = buffer.duration;
           renderPadGrid();
           drawActiveWaveform();
+          if (typeof renderMiniPadsPicker === 'function') renderMiniPadsPicker();
+          if (typeof updateChromaticSoundDisplay === 'function') updateChromaticSoundDisplay();
         } catch (err) {
           alert('Error al decodificar audio: ' + err.message);
         }
@@ -2405,21 +3580,86 @@
     // Live Sampler Button
     document.getElementById('btnLiveRecord').addEventListener('click', toggleLiveRecording);
 
+    // Mode Switcher (16 Pads vs Chromatic Keys)
+    document.getElementById('btnModePads').addEventListener('click', () => setPlayMode('pads'));
+    document.getElementById('btnModeChromatic').addEventListener('click', () => setPlayMode('chromatic'));
+    document.getElementById('btnOctDown').addEventListener('click', () => shiftOctave(-1));
+    document.getElementById('btnOctUp').addEventListener('click', () => shiftOctave(1));
+
+    // Sequencer View Switcher (Single Track vs Multi-Track Grid)
+    document.getElementById('btnSeqViewSingle').addEventListener('click', () => setSeqView('single'));
+    document.getElementById('btnSeqViewMulti').addEventListener('click', () => setSeqView('multitrack'));
+
     // Clear Track & Pattern
     document.getElementById('btnClearTrack').addEventListener('click', () => {
       patternGrid[selectedPadIndex].fill(false);
       renderStepGrid();
-    });
-    document.getElementById('btnClearPattern').addEventListener('click', () => {
-      if (confirm('¿Limpiar todos los patrones del secuenciador?')) {
-        for (let p = 0; p < 16; p++) patternGrid[p].fill(false);
-        renderStepGrid();
+      if (currentSeqView === 'multitrack') {
+        renderMultiTrackGrid();
       }
     });
+    document.getElementById('btnClearPattern').addEventListener('click', () => {
+      if (confirm('¿Limpiar todos los patrones del secuenciador (las 16 pistas)?')) {
+        for (let p = 0; p < 16; p++) patternGrid[p].fill(false);
+        renderStepGrid();
+        if (currentSeqView === 'multitrack') {
+          renderMultiTrackGrid();
+        }
+      }
+    });
+
+    /* =========================================================================
+       15. DRAGGABLE LAYOUT SPLITTER
+       ========================================================================= */
+    function initLayoutSplitter() {
+      const splitter = document.getElementById('layoutSplitter');
+      const grid = document.getElementById('bottomStudioGrid');
+      const leftCard = document.getElementById('padsSectionCard');
+      const rightCard = document.getElementById('sequencerSectionCard');
+      if (!splitter || !grid || !leftCard || !rightCard) return;
+
+      let isDragging = false;
+
+      splitter.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isDragging = true;
+        splitter.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const gridRect = grid.getBoundingClientRect();
+        const mouseX = e.clientX - gridRect.left;
+        const minLeft = 320;
+        const maxLeft = gridRect.width - 360;
+        const clampedX = Math.max(minLeft, Math.min(maxLeft, mouseX));
+
+        leftCard.style.flex = `0 0 ${clampedX}px`;
+        rightCard.style.flex = '1 1 0px';
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          splitter.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      });
+
+      // Double-click to reset 50% / 50%
+      splitter.addEventListener('dblclick', () => {
+        leftCard.style.flex = '1 1 50%';
+        rightCard.style.flex = '1 1 50%';
+      });
+    }
 
     // Window load & User activation
     window.addEventListener('DOMContentLoaded', async () => {
       initKnobs();
+      initLayoutSplitter();
       try {
         await initAudio();
       } catch (e) {

@@ -1,5 +1,5 @@
-# 🥁 AGY-SAMPLER STUDIO PRO
-### *Estación de Muestreo, Síntesis Analógica y Secuenciador Groovebox MPC en Web Audio DSP*
+# 🥁 CDC-SAMPLER STUDIO PRO
+### *Estación de Muestreo, Síntesis Analógica, Teclado Cromático y Secuenciador Multi-Track en Web Audio DSP*
 
 [![Platform: All Browsers](https://img.shields.io/badge/Platform-Chrome%20%7C%20Edge%20%7C%20Brave%20%7C%20Firefox-orange.svg?style=for-the-badge)](#)
 [![Audio Engine: Web Audio API 64-bit](https://img.shields.io/badge/Audio%20Engine-Web%20Audio%2064--bit-blue.svg?style=for-the-badge)](#)
@@ -11,25 +11,32 @@
 
 ---
 
-![AGY-SAMPLER STUDIO PRO - Hardware Overview](screenshots/workstation_live.png)
+![CDC-SAMPLER STUDIO PRO - Hardware Overview](screenshots/workstation_live.png)
 
 ---
 
 ## ⚡ Descripción General / Overview
 
-**AGY-SAMPLER STUDIO PRO** es una estación de trabajo de producción musical (*Groovebox / MPC Workstation*) virtual de alta fidelidad, inspirada en las legendarias máquinas de muestreo hardware (Akai MPC, E-mu SP-1200, Roland TR-808/909). 
+**CDC-SAMPLER STUDIO PRO** es una estación de trabajo de producción musical (*Groovebox / MPC Workstation / Drum Machine*) virtual de alta fidelidad, inspirada en las legendarias máquinas de muestreo hardware (Akai MPC, E-mu SP-1200, Roland TR-808/909). 
 
 Construida con una arquitectura de ingeniería **100% autoportante (Single-File)** sin dependencias externas, compiladores ni dependencias de Node.js, ejecuta un motor de procesamiento de señal digital (**DSP**) de coma flotante de 64 bits directamente en el navegador mediante la **Web Audio API**.
 
-Incluye:
+### 🌟 Capacidades Principales
 - **Editor OLED de formas de onda** con corte de transitorios y autosegmentación (*Auto-Slicer* en 16 porciones).
-- **Matriz de 16 Pads de Silicona** con iluminación RGB reactiva, soporte de 4 bancos (64 ranuras) y grupos de exclusión (*Choke Groups*).
+- **Doble Modo de Interpretación**:
+  - **`16 PADS`**: Matriz de silicona 4x4 con iluminación RGB reactiva, 4 bancos (64 ranuras) y grupos de exclusión (*Choke Groups*).
+  - **`CHROMATIC KEYS`**: Teclado de sintetizador de 4 octavas (C2 a C6, 49 teclas) con ancho físico invariable, polifonía real para acordes y transposición por semitonos en tiempo real.
+- **Secuenciador Multi-Track (Grid de 16 Pistas)**:
+  - Selector de vista: **`1 TRACK`** (edición detallada) vs **`MULTI-TRACK (GRID)`** (16 pistas de instrumentos visibles y editables simultáneamente).
+  - Controles individuales de **Mute (`M`)** y **Solo (`S`)** por canal.
+  - Reloj lookahead de ultra precisión, swing analógico MPC (50% a 75%), metrónomo y grabación al vuelo.
+- **Distribución 50% / 50% con Splitter Interactivo**: Barra divisoria arrastrable con el mouse y reseteo por doble clic.
+- **Iconografía Vectorial Profesional (SVG)**: Gráficos vectoriales nítidos de alta gama para transporte, herramientas y selectores.
 - **Matriz de Síntesis por Voz**: Envolventes ADSR analógicas, filtro multimodo resonante VCF de 24 dB/oct, y modulación LFO asignable.
-- **Rack de Efectos Master Vintage**: Emulador de SP-1200 Bitcrusher de 12 bits, Saturador de Cinta cálido, Tape Delay estéreo sincronizado al tempo, Reverb convolutiva y Compresor/Limitador de bus de salida.
-- **Secuenciador de Pasos con Reloj Lookahead de Ultra Precisión**: 16 pasos por pista, swing analógico MPC (50% a 75%), metrónomo y grabación en vivo.
+- **Rack de Efectos Master Vintage**: Emulador SP-1200 Bitcrusher de 12 bits, Saturador de Cinta cálido, Tape Delay estéreo sincronizado, Reverb algorítmica y Compresor/Limitador de bus.
 - **Muestreo en Vivo desde Micrófono/Línea** con medidor de nivel VU estéreo en tiempo real.
-- **Control Físico**: Detección plug & play de controladores MIDI USB vía **Web MIDI API** y mapeo ergonómico para teclados de computadora.
-- **Renderizado Offline a WAV**: Exportación en master estéreo PCM sin pérdida (44.1 kHz, 16 bits).
+- **Control Físico Plug & Play**: Detección nativa de controladores MIDI USB vía **Web MIDI API** y mapeo ergonómico para teclados de computadora.
+- **Renderizado Offline a WAV**: Exportación en master estéreo PCM sin pérdida (44.1 kHz, 16 bits), respetando mutes y solos.
 
 ---
 
@@ -50,23 +57,25 @@ Cada uno de los 16 pads cuenta con procesamiento de voz independiente:
 | :---: | :---: |
 | ![VCF Filter](screenshots/vcf_filter.png) | ![Master FX](screenshots/master_fx.png) |
 
-### 3. 📼 Rack de Efectos Vintage Master
-Procesamiento analógico en el bus principal para otorgar pegada, calidez y textura clásica de vinilo y cinta:
-- **SP-1200 Crush**: Reducción de tasa de muestreo y resolución a 12 bits para ese sonido icónico del hip-hop de los 90.
-- **Tape Drive**: Saturación armónica de válvulas y cinta con limitación suave (*Soft Clipping*).
-- **Delay Mix**: Eco estéreo con retardo sincronizado a subdivisiones de tempo BPM.
-- **Reverb Mix**: Simulación de espacio acústico con amortiguación de altas frecuencias.
-- **Bus Comp**: Compresión de bus estilo VCA con recuperación automática para compactar la mezcla final.
+### 3. 🎹 Modo Teclado Cromático Polifónico (Voces y Sintetizadores)
+Diseñado para interpretar melodías, voces y acordes corales completos utilizando cualquier muestra:
+- **4 Octavas Completas (C2 a C6, 49 teclas)**: Teclas blancas fijas a `36px` y negras a `22px` con proporciones físicas naturales invariables (no se deforman al redimensionar la ventana).
+- **Polifonía real de voces**: Permite ejecutar acordes simultáneos (tríadas, séptimas, capas vocales) sin cortes abruptos entre voces.
+- **Navegación horizontal fluida**: Desplazamiento por rueda de ratón (*scroll wheel*) y auto-centrado suave hacia la octava activa.
+- **Selector rápido de Pad**: Menú integrado de mini-pads para cambiar el sonido de la voz melódica con un solo clic.
 
-### 4. 🥁 Matriz de 16 Pads MPC y Grabador de Micrófono
-Pads iluminados dinámicamente según la intensidad de disparo. Muestra el estado One-Shot/Loop, la tecla de acceso rápido asignada, y el grupo Choke para silenciar charles (*Hi-Hats*) abiertos al pulsar uno cerrado.
+### 4. 🥁 Secuenciador de Pasos: Vista Single vs Multi-Track (Grid)
+- **Modo `1 TRACK`**: Vista clásica para programación detallada con botones de paso grandes para el pad en foco.
+- **Modo `MULTI-TRACK (GRID)`**: Matriz estilo drum machine / DAW donde las **16 pistas de instrumentos se visualizan apiladas verticalmente**:
+  - Visualización del patrón completo de batería y melodía en una sola pantalla.
+  - Botones **`M` (Mute)** y **`S` (Solo)** independientes por pista.
+  - Barra de LEDs superior que indica la posición del compás en tiempo real sobre todas las pistas.
+  - Resaltado de compases (pasos 1, 5, 9 y 13).
 
-![Pads Matrix](screenshots/pads_matrix.png)
-
-### 5. 🎼 Secuenciador de Pasos de Alta Precisión
-Secuenciador por pasos con indicación visual por LED de la posición actual del cursor de reproducción, cuantización 4/4, swing analógico MPC seleccionable (desde 50% recto hasta 75% shuffle acentuado), y controles rápidos de borrado de pista o patrón completo.
-
-![16-Step Sequencer](screenshots/step_sequencer.png)
+### 5. 🎚️ Splitter Interactivo y Distribución 50% / 50%
+Permite adaptar el área de trabajo según la tarea en curso:
+- Arrastre con el mouse para expandir el sector de interpretación (Pads / Teclas) o el secuenciador de pasos.
+- **Doble clic de restauración**: Restablece instantáneamente la proporción simétrica 50% / 50%.
 
 ---
 
@@ -75,18 +84,25 @@ Secuenciador por pasos con indicación visual por LED de la posición actual del
 ```mermaid
 graph LR
     subgraph INGESTION ["Entrada de Audio"]
-        A1["🎙️ Micrófono / Entrada de Línea"]
-        A2["📁 Importador WAV / MP3 / FLAC"]
-        A3["🔊 Sintetizadores Analógicos Offline"]
+        A1["Micrófono / Entrada de Línea"]
+        A2["Importador WAV / MP3 / FLAC"]
+        A3["Sintetizadores Analógicos Offline"]
     end
 
-    subgraph VOICE_DSP ["Procesamiento por Voz (x16 Pads)"]
+    subgraph VOICE_DSP ["Procesamiento por Voz (x16 Pads / Teclas Polifónicas)"]
         B1["Waveform Slicer / Trimmer"]
         B2["Pitch Shifter / Resampler"]
-        B3["ADSR Amp Envelope"]
+        B3["ADSR Amp Envelope (Poly Voices)"]
         B4["VCF Multimode Filter (24dB/oct)"]
         B5["LFO Modulation Engine"]
         B6["Choke Logic"]
+    end
+
+    subgraph SEQUENCER ["Secuenciador 16 Pistas"]
+        S1["Lookahead Clock Engine"]
+        S2["Single Track View"]
+        S3["Multi-Track Grid View"]
+        S4["Mute / Solo Matrix"]
     end
 
     subgraph MASTER_BUS ["Rack de Efectos Master"]
@@ -98,8 +114,8 @@ graph LR
     end
 
     subgraph OUTPUT ["Salida"]
-        D1["🔊 AudioContext Destination (Bocinas / Auriculares)"]
-        D2["💾 OfflineAudioContext -> WAV Export (16-bit 44.1kHz)"]
+        D1["AudioContext Destination (Bocinas / Auriculares)"]
+        D2["OfflineAudioContext -> WAV Export (16-bit 44.1kHz)"]
     end
 
     INGESTION --> B1
@@ -107,6 +123,7 @@ graph LR
     B5 -.->|Modula| B2
     B5 -.->|Modula| B4
     B6 -.->|Corta| B3
+    SEQUENCER --> VOICE_DSP
     MASTER_BUS --> C1 --> C2 --> C3 --> C4 --> C5
     C5 --> OUTPUT
 ```
@@ -116,19 +133,21 @@ graph LR
 | **Pipeline de Procesamiento** | 64-bit Floating-Point DSP Pipeline nativo de `AudioContext` |
 | **Latencia de Audio** | `latencyHint: 'interactive'` (~2.8 ms a 5.5 ms con buffers hardware directos) |
 | **Reloj de Secuenciación** | Algoritmo Web Audio Lookahead Timer (deriva temporal < 0.5 ms) |
+| **Pistas de Secuenciador** | 16 Pistas simultáneas con vista Single y Multi-Track Grid con Mute / Solo |
+| **Teclado Cromático** | 4 Octavas (C2-C6, 49 teclas) polifónico con Web MIDI y teclas fijas |
 | **Matriz de Pads** | 16 Pads virtuales x 4 bancos (`Bank A`, `Bank B`, `Bank C`, `Bank D`) = 64 sonidos |
 | **Slicer Automático** | Detección matemática de transitorios y particionado simétrico 1/16 a pads |
 | **Formatos Soportados** | WAV, MP3, AIFF, OGG, FLAC, AAC (decodificación directa vía Web Audio) |
 | **Exportación** | Master mixdown estéreo PCM WAV (44.1 kHz, 16 bits) vía `OfflineAudioContext` |
-| **Web MIDI** | Integración nativa sin drivers vía `navigator.requestMIDIAccess` |
+| **Web MIDI** | Integración nativa plug-and-play vía `navigator.requestMIDIAccess` |
+| **Iconografía** | Gráficos vectoriales SVG puros con alineación subpixel |
 | **Portabilidad** | 100% Single-File HTML / Vanilla JS / CSS3 (Sin node_modules, sin Webpack) |
 
 ---
 
 ## ⌨️ Mapeo de Teclado de Computadora
 
-Puedes ejecutar ritmos directamente desde tu teclado como si fuera una MPC física:
-
+### 1. En Modo `16 PADS` (Baterías y Cajas de Ritmo)
 ```
 ┌──────────┬──────────┬──────────┬──────────┐
 │  [ 1 ]   │  [ 2 ]   │  [ 3 ]   │  [ 4 ]   │
@@ -145,8 +164,13 @@ Puedes ejecutar ritmos directamente desde tu teclado como si fuera una MPC físi
 └──────────┴──────────┴──────────┴──────────┘
 ```
 
-### Controles de Transporte y Flujo de Trabajo
-- **`Barra Espaciadora`**: Iniciar / Detener reproducción del secuenciador (`PLAY / STOP`).
+### 2. En Modo `CHROMATIC KEYS` (Melodías, Voces y Sintetizadores)
+- **Teclas Blancas**: `A` (C), `S` (D), `D` (E), `F` (F), `G` (G), `H` (A), `J` (B), `K` (C+1), `L` (D+1), `Ñ` (E+1), `'` (F+1)
+- **Teclas Negras**: `W` (C#), `E` (D#), `T` (F#), `Y` (G#), `U` (A#), `O` (C#+1), `P` (D#+1)
+- **Cambio de Octava**: `Z` (bajar octava) / `X` (subir octava)
+
+### 3. Controles Globales de Transporte
+- **`Barra Espaciadora`**: Iniciar / Pausar reproducción del secuenciador (`PLAY / PAUSE`).
 - **`TAP`**: Ajuste intuitivo de tempo tocando al ritmo deseado con el ratón.
 - **`CLICK`**: Conmutación de metrónomo audible para ensayar y grabar en tiempo real.
 - **`REC`**: Activación de grabación en vivo sobre los pasos del secuenciador.
@@ -161,7 +185,7 @@ Al ser una solución de archivo único completamente autónoma y sin dependencia
 ```html
 <iframe 
     src="index.html" 
-    title="AGY Sampler Studio Pro"
+    title="CDC Sampler Studio Pro"
     style="width: 100%; height: 95vh; border: none; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);"
     allow="microphone; midi">
 </iframe>
