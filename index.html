@@ -645,14 +645,18 @@
       padding: 8px 10px;
       border-radius: 8px;
       border: 1px solid #1f2737;
+      overflow: hidden;
     }
 
     .keyboard-presets-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       font-size: 10px;
       font-family: var(--font-mono);
+      margin-bottom: 2px;
+      flex-wrap: wrap;
     }
 
     .keyboard-presets-title {
@@ -663,6 +667,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      white-space: nowrap;
     }
 
     .active-preset-badge {
@@ -670,38 +675,78 @@
       border: 1px solid rgba(0, 255, 170, 0.35);
       color: #00ffaa;
       font-weight: 800;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 4px;
       font-size: 10px;
       letter-spacing: 0.5px;
+      white-space: nowrap;
+      margin-left: auto;
     }
 
-    .keyboard-presets-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
+    .keyboard-presets-slider-wrap {
+      display: flex;
+      align-items: center;
       gap: 6px;
+      width: 100%;
+      position: relative;
     }
 
-    @media (max-width: 1100px) {
-      .keyboard-presets-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
+    .preset-nav-triangle {
+      flex: 0 0 28px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #141a24;
+      border: 1px solid #273447;
+      border-radius: 5px;
+      color: var(--accent-orange);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
 
-    @media (max-width: 800px) {
-      .keyboard-presets-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+    .preset-nav-triangle:hover {
+      background: #202b3c;
+      border-color: var(--accent-orange);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 94, 0, 0.4);
+      transform: scale(1.05);
+    }
+
+    .preset-nav-triangle:active {
+      transform: scale(0.95);
+    }
+
+    .keyboard-presets-scroll {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 2px;
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    .keyboard-presets-scroll::-webkit-scrollbar {
+      display: none;
     }
 
     .kb-preset-btn {
+      flex: 0 0 auto;
+      min-width: 125px;
       display: flex;
       align-items: center;
       gap: 6px;
       background: #141923;
       border: 1px solid #232d3f;
       border-radius: 6px;
-      padding: 5px 8px;
+      padding: 5px 9px;
       cursor: pointer;
       color: #cfd8dc;
       font-size: 11px;
@@ -1777,8 +1822,20 @@
               </div>
               <span id="activePresetTag" class="active-preset-badge">🎹 CONCERT GRAND PIANO</span>
             </div>
-            <div class="keyboard-presets-grid" id="keyboardPresetsGrid">
-              <!-- 12 Presets rendered dynamically in JS -->
+            <div class="keyboard-presets-slider-wrap">
+              <button class="preset-nav-triangle btn" id="btnPresetNavLeft" type="button" title="Desplazar presets hacia la izquierda">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="18 4 6 12 18 20"/>
+                </svg>
+              </button>
+              <div class="keyboard-presets-scroll" id="keyboardPresetsGrid">
+                <!-- 12 Presets rendered dynamically in JS -->
+              </div>
+              <button class="preset-nav-triangle btn" id="btnPresetNavRight" type="button" title="Desplazar presets hacia la derecha">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="6 4 18 12 6 20"/>
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -3971,7 +4028,13 @@ const EMBEDDED_STUDIO_SAMPLES = {
 
       // Highlight active preset chip
       document.querySelectorAll('.kb-preset-btn').forEach(b => {
-        b.classList.toggle('active', b.id === `kbPresetBtn_${key}`);
+        const isActive = (b.id === `kbPresetBtn_${key}`);
+        b.classList.toggle('active', isActive);
+        if (isActive) {
+          try {
+            b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          } catch (e) {}
+        }
       });
 
       // Play short audition note on selection if requested
@@ -4380,6 +4443,22 @@ const EMBEDDED_STUDIO_SAMPLES = {
     document.getElementById('btnModeChromatic').addEventListener('click', () => setPlayMode('chromatic'));
     document.getElementById('btnOctDown').addEventListener('click', () => shiftOctave(-1));
     document.getElementById('btnOctUp').addEventListener('click', () => shiftOctave(1));
+
+    // Preset Navigation Triangles (Left / Right)
+    const btnNavL = document.getElementById('btnPresetNavLeft');
+    const btnNavR = document.getElementById('btnPresetNavRight');
+    if (btnNavL) {
+      btnNavL.addEventListener('click', () => {
+        const scrollEl = document.getElementById('keyboardPresetsGrid');
+        if (scrollEl) scrollEl.scrollBy({ left: -220, behavior: 'smooth' });
+      });
+    }
+    if (btnNavR) {
+      btnNavR.addEventListener('click', () => {
+        const scrollEl = document.getElementById('keyboardPresetsGrid');
+        if (scrollEl) scrollEl.scrollBy({ left: 220, behavior: 'smooth' });
+      });
+    }
 
     // Sequencer View Switcher (Single Track vs Multi-Track Grid)
     document.getElementById('btnSeqViewSingle').addEventListener('click', () => setSeqView('single'));
