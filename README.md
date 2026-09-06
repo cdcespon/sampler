@@ -22,6 +22,10 @@
 Construida con una arquitectura de ingeniería **100% autoportante (Single-File)** sin dependencias externas, compiladores ni dependencias de Node.js, ejecuta un motor de procesamiento de señal digital (**DSP**) de coma flotante de 64 bits directamente en el navegador mediante la **Web Audio API**.
 
 ### 🌟 Capacidades Principales
+- **Librería de Sonidos de Estudio de Alta Fidelidad (44.1 kHz)**: 18 muestras de estudio profesionales embebidas en memoria (bombo 808 sub, bombo acústico punch, redoblantes trap y acústico, rimshot orgánico, clap estéreo, hi-hats cerrado/abierto/pedal, toms bajo/medio/alto, crash de 2.2s, ride de 1.6s, cowbell, shaker y congas).
+- **Selector Dinámico de Sonidos de Estudio**: Menú desplegable interactivo en la pantalla OLED para reasignar cualquiera de los 18 instrumentos o sintetizadores a cualquier pad en tiempo real.
+- **Síntesis DSP Enriquecida**: Bajo analógico FM multi-operador con caída transitoria y sub-oscilador sísmico (27.5 Hz), y coro vocal con formantes resonantes ($F_1, F_2, F_3$) y vibrato.
+- **Saturación de Cinta Magnética $\tanh$ y Master Bus Comp**: Curva física no lineal de saturación con sobremuestreo `2x`, compresión VCA de pegada de bus y limitador brickwall de pico de 0 dBFS.
 - **Editor OLED de formas de onda** con corte de transitorios y autosegmentación (*Auto-Slicer* en 16 porciones).
 - **Doble Modo de Interpretación**:
   - **`16 PADS`**: Matriz de silicona 4x4 con iluminación RGB reactiva, 4 bancos (64 ranuras) y grupos de exclusión (*Choke Groups*).
@@ -33,7 +37,7 @@ Construida con una arquitectura de ingeniería **100% autoportante (Single-File)
 - **Distribución 50% / 50% con Splitter Interactivo**: Barra divisoria arrastrable con el mouse y reseteo por doble clic.
 - **Iconografía Vectorial Profesional (SVG)**: Gráficos vectoriales nítidos de alta gama para transporte, herramientas y selectores.
 - **Matriz de Síntesis por Voz**: Envolventes ADSR analógicas, filtro multimodo resonante VCF de 24 dB/oct, y modulación LFO asignable.
-- **Rack de Efectos Master Vintage**: Emulador SP-1200 Bitcrusher de 12 bits, Saturador de Cinta cálido, Tape Delay estéreo sincronizado, Reverb algorítmica y Compresor/Limitador de bus.
+- **Rack de Efectos Master Vintage**: Emulador SP-1200 Bitcrusher de 12 bits, Saturador de Cinta cálido $\tanh$, Tape Delay estéreo sincronizado, Reverb convolutiva con decaimiento natural y Compresor/Limitador de bus.
 - **Muestreo en Vivo desde Micrófono/Línea** con medidor de nivel VU estéreo en tiempo real.
 - **Control Físico Plug & Play**: Detección nativa de controladores MIDI USB vía **Web MIDI API** y mapeo ergonómico para teclados de computadora.
 - **Renderizado Offline a WAV**: Exportación en master estéreo PCM sin pérdida (44.1 kHz, 16 bits), respetando mutes y solos.
