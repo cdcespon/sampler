@@ -61,12 +61,26 @@ Cada uno de los 16 pads cuenta con procesamiento de voz independiente:
 | :---: | :---: |
 | ![VCF Filter](screenshots/vcf_filter.png) | ![Master FX](screenshots/master_fx.png) |
 
-### 3. 🎹 Modo Teclado Cromático Polifónico (Voces y Sintetizadores)
-Diseñado para interpretar melodías, voces y acordes corales completos utilizando cualquier muestra:
-- **4 Octavas Completas (C2 a C6, 49 teclas)**: Teclas blancas fijas a `36px` y negras a `22px` con proporciones físicas naturales invariables (no se deforman al redimensionar la ventana).
+### 3. 🎹 Modo Teclado Cromático Polifónico & Presets de Instrumentos
+Diseñado para interpretar melodías, bajos, leads y acordes corales polifónicos con teclado virtual, teclado de computadora o Web MIDI:
+- **Catálogo de 12 Presets de Teclado Dedicados**: Botones de acceso rápido para cargar al instante instrumentos melódicos afinados en C3 con su envolvente ADSR y filtro VCF idóneos:
+  - 🎹 *Concert Grand Piano* (Piano acústico con armónicos inarmónicos y martillo).
+  - 🎹 *Rhodes MK I* (Piano eléctrico vintage con tine acampanado y trémolo).
+  - 🎹 *B3 Jazz Organ* (Órgano de tiradores con sustain completo).
+  - 🎻 *Juno Poly Strings* (Ensamble de cuerdas analógicas con coro estéreo).
+  - 🎺 *80s Synth Brass* (Metales sintéticos con barrido dinámico de filtro).
+  - 🎸 *Moog Sub-Bass* (Bajo analógico FM con sub-oscilador sísmico).
+  - ⚡ *Neon Retro Lead* (Lead solista con vibrato y corte brillante).
+  - 🔮 *Crystal Glass Pluck* (Pluck cristalino y percusivo).
+  - 🌌 *Ambient Cloud Pad* (Pad atmosférico con apertura y release espacial).
+  - 🗣️ *Soul Vocal Choir* (Coro vocal multi-formante $F_1, F_2, F_3$).
+  - 🏝️ *African Kalimba* (Tine percusivo de madera orgánica).
+  - 🌊 *TB-303 Acid Saw* (Lead resonante agresivo con overdrive analógico).
+- **Activación Inteligente**: Al pasar a modo teclado cromático, el sistema activa automáticamente el Grand Piano si el pad previo era una batería.
+- **4 Octavas Completas (C2 a C6, 49 teclas)**: Teclas blancas fijas a `36px` y negras a `22px` con proporciones físicas naturales invariables.
 - **Polifonía real de voces**: Permite ejecutar acordes simultáneos (tríadas, séptimas, capas vocales) sin cortes abruptos entre voces.
 - **Navegación horizontal fluida**: Desplazamiento por rueda de ratón (*scroll wheel*) y auto-centrado suave hacia la octava activa.
-- **Selector rápido de Pad**: Menú integrado de mini-pads para cambiar el sonido de la voz melódica con un solo clic.
+- **Selector secundario de Pads**: Panel colapsable para disparar cualquier muestra de batería o loop en el teclado si se desea.
 
 ### 4. 🥁 Secuenciador de Pasos: Vista Single vs Multi-Track (Grid)
 - **Modo `1 TRACK`**: Vista clásica para programación detallada con botones de paso grandes para el pad en foco.

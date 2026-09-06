@@ -636,6 +636,130 @@
     }
 
     /* CHROMATIC PIANO KEYBOARD VIEW */
+    /* KEYBOARD INSTRUMENT PRESETS DOCK */
+    .keyboard-presets-dock {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #090b10;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #1f2737;
+    }
+
+    .keyboard-presets-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-family: var(--font-mono);
+    }
+
+    .keyboard-presets-title {
+      color: #8b9bb4;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .active-preset-badge {
+      background: rgba(0, 255, 170, 0.12);
+      border: 1px solid rgba(0, 255, 170, 0.35);
+      color: #00ffaa;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .keyboard-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 1100px) {
+      .keyboard-presets-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 800px) {
+      .keyboard-presets-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .kb-preset-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #141923;
+      border: 1px solid #232d3f;
+      border-radius: 6px;
+      padding: 5px 8px;
+      cursor: pointer;
+      color: #cfd8dc;
+      font-size: 11px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+      text-align: left;
+      user-select: none;
+    }
+
+    .kb-preset-btn:hover {
+      background: #1e2637;
+      border-color: #3b4b66;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .kb-preset-btn.active {
+      background: linear-gradient(135deg, rgba(255, 94, 0, 0.25) 0%, rgba(255, 149, 0, 0.15) 100%);
+      border-color: var(--accent-orange);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 94, 0, 0.3);
+    }
+
+    .kb-preset-icon {
+      font-size: 15px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .kb-preset-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .kb-preset-name {
+      font-size: 10.5px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .kb-preset-category {
+      font-size: 8.5px;
+      color: #728299;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .kb-preset-btn.active .kb-preset-category {
+      color: #ffa266;
+    }
+
     .chromatic-panel {
       display: flex;
       flex-direction: column;
@@ -1641,13 +1765,32 @@
             </div>
           </div>
 
-          <!-- MINI PADS PICKER -->
-          <div>
-            <div style="font-size:9px; color:#7d8c9e; margin-bottom:4px; font-family:var(--font-mono); text-transform:uppercase;">MUESTRA O VOZ ACTIVA:</div>
-            <div class="mini-pads-picker" id="miniPadsPicker">
-              <!-- Rendered dynamically -->
+<!-- KEYBOARD INSTRUMENT PRESETS DOCK -->
+          <div class="keyboard-presets-dock">
+            <div class="keyboard-presets-header">
+              <div class="keyboard-presets-title">
+                <svg class="ui-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9Z"/>
+                  <path d="M6 7v6m4-6v6m4-6v6m4-6v6"/>
+                </svg>
+                <span>PRESETS DE TECLADO / INSTRUMENTOS SINTETIZADOS</span>
+              </div>
+              <span id="activePresetTag" class="active-preset-badge">🎹 CONCERT GRAND PIANO</span>
+            </div>
+            <div class="keyboard-presets-grid" id="keyboardPresetsGrid">
+              <!-- 12 Presets rendered dynamically in JS -->
             </div>
           </div>
+
+          <!-- MINI PADS PICKER (Muestras de Pads Alternativas) -->
+          <details class="mini-pads-details" style="font-size:10px; color:#7d8c9e;">
+            <summary style="cursor:pointer; font-family:var(--font-mono); text-transform:uppercase; user-select:none; display:flex; align-items:center; gap:5px; padding:2px 0;">
+              <span>▼ Muestras de Pads (o disparar muestra de batería en teclado)</span>
+            </summary>
+            <div class="mini-pads-picker" id="miniPadsPicker" style="margin-top:4px;">
+              <!-- Rendered dynamically -->
+            </div>
+          </details>
 
           <!-- 25-KEY VIRTUAL PIANO -->
           <div>
@@ -3425,6 +3568,421 @@ const EMBEDDED_STUDIO_SAMPLES = {
       });
     })();
 
+    /* =========================================================================
+       12.1. KEYBOARD INSTRUMENT PRESETS (Melodic & Harmonic Sound Bank)
+       ========================================================================= */
+    const KEYBOARD_PRESETS = {
+      piano: {
+        key: 'piano',
+        name: 'Grand Piano',
+        fullName: 'Concert Grand Piano',
+        category: 'Acoustic Keys',
+        icon: '🎹',
+        ampA: 0.003,
+        ampD: 1.4,
+        ampS: 0.35,
+        ampR: 0.5,
+        filtCut: 18000,
+        filtRes: 1.0,
+        buffer: null
+      },
+      rhodes: {
+        key: 'rhodes',
+        name: 'Rhodes MK I',
+        fullName: 'Rhodes MK I E-Piano',
+        category: 'Electric Piano',
+        icon: '🎹',
+        ampA: 0.004,
+        ampD: 1.2,
+        ampS: 0.45,
+        ampR: 0.4,
+        filtCut: 14000,
+        filtRes: 1.2,
+        buffer: null
+      },
+      organ: {
+        key: 'organ',
+        name: 'B3 Jazz Organ',
+        fullName: 'Hammond B3 Drawbar Organ',
+        category: 'Drawbar Organ',
+        icon: '🎹',
+        ampA: 0.002,
+        ampD: 0.1,
+        ampS: 1.0,
+        ampR: 0.08,
+        filtCut: 16000,
+        filtRes: 1.0,
+        buffer: null
+      },
+      strings: {
+        key: 'strings',
+        name: 'Juno Strings',
+        fullName: 'Vintage Juno Poly Strings',
+        category: 'Analog Ensemble',
+        icon: '🎻',
+        ampA: 0.12,
+        ampD: 1.5,
+        ampS: 0.85,
+        ampR: 0.7,
+        filtCut: 9500,
+        filtRes: 1.4,
+        buffer: null
+      },
+      brass: {
+        key: 'brass',
+        name: '80s Synth Brass',
+        fullName: 'Oberheim 80s Poly Brass',
+        category: 'Poly Brass',
+        icon: '🎺',
+        ampA: 0.025,
+        ampD: 0.9,
+        ampS: 0.65,
+        ampR: 0.35,
+        filtCut: 12000,
+        filtRes: 2.2,
+        buffer: null
+      },
+      bass: {
+        key: 'bass',
+        name: 'Moog Sub-Bass',
+        fullName: 'Analog Moog Sub-Bass',
+        category: 'Analog Bass',
+        icon: '🎸',
+        ampA: 0.003,
+        ampD: 0.6,
+        ampS: 0.75,
+        ampR: 0.2,
+        filtCut: 6000,
+        filtRes: 2.0,
+        buffer: null
+      },
+      lead: {
+        key: 'lead',
+        name: 'Neon Lead',
+        fullName: 'Synthwave Neon Retro Lead',
+        category: 'Lead Synth',
+        icon: '⚡',
+        ampA: 0.008,
+        ampD: 1.0,
+        ampS: 0.7,
+        ampR: 0.3,
+        filtCut: 16000,
+        filtRes: 2.5,
+        buffer: null
+      },
+      pluck: {
+        key: 'pluck',
+        name: 'Glass Pluck',
+        fullName: 'Crystal Glass Pluck',
+        category: 'Bell / Pluck',
+        icon: '🔮',
+        ampA: 0.001,
+        ampD: 0.5,
+        ampS: 0.1,
+        ampR: 0.35,
+        filtCut: 18000,
+        filtRes: 1.0,
+        buffer: null
+      },
+      pad: {
+        key: 'pad',
+        name: 'Cloud Pad',
+        fullName: 'Ambient Cloud Dream Pad',
+        category: 'Atmosphere',
+        icon: '🌌',
+        ampA: 0.22,
+        ampD: 2.0,
+        ampS: 0.9,
+        ampR: 0.9,
+        filtCut: 7500,
+        filtRes: 1.2,
+        buffer: null
+      },
+      choir: {
+        key: 'choir',
+        name: 'Soul Choir',
+        fullName: 'Soul Formant Choir Chop',
+        category: 'Vocal Chop',
+        icon: '🗣️',
+        ampA: 0.015,
+        ampD: 0.9,
+        ampS: 0.7,
+        ampR: 0.45,
+        filtCut: 15000,
+        filtRes: 1.1,
+        buffer: null
+      },
+      kalimba: {
+        key: 'kalimba',
+        name: 'Kalimba',
+        fullName: 'African Tine Kalimba',
+        category: 'Tine Percussion',
+        icon: '🏝️',
+        ampA: 0.001,
+        ampD: 0.55,
+        ampS: 0.15,
+        ampR: 0.3,
+        filtCut: 16000,
+        filtRes: 1.0,
+        buffer: null
+      },
+      acid: {
+        key: 'acid',
+        name: 'TB-303 Acid',
+        fullName: 'TB-303 Resonant Acid Saw',
+        category: 'Overdrive Lead',
+        icon: '🌊',
+        ampA: 0.002,
+        ampD: 0.4,
+        ampS: 0.3,
+        ampR: 0.18,
+        filtCut: 8000,
+        filtRes: 3.5,
+        buffer: null
+      }
+    };
+
+    let currentKeyboardPresetKey = 'piano';
+
+    function generateKeyboardPresetBuffer(key, sampleRate = 44100) {
+      const duration = 1.3;
+      const numSamples = Math.floor(sampleRate * duration);
+      const buffer = audioCtx ? audioCtx.createBuffer(1, numSamples, sampleRate) : {
+        duration: duration,
+        sampleRate: sampleRate,
+        numberOfChannels: 1,
+        getChannelData: () => new Float32Array(numSamples)
+      };
+      const data = buffer.getChannelData(0);
+
+      // Root note tuned to C3 (130.813 Hz) or C4 / C2 where appropriate
+      let f0 = 130.813;
+      if (key === 'pluck' || key === 'kalimba') f0 = 261.626;
+      else if (key === 'bass') f0 = 65.406;
+
+      for (let i = 0; i < numSamples; i++) {
+        const t = i / sampleRate;
+        let val = 0.0;
+
+        switch (key) {
+          case 'piano': {
+            const p1 = Math.sin(2 * Math.PI * f0 * t) * Math.exp(-t * 2.0);
+            const p2 = Math.sin(2 * Math.PI * f0 * 2.003 * t) * 0.55 * Math.exp(-t * 3.5);
+            const p3 = Math.sin(2 * Math.PI * f0 * 3.008 * t) * 0.35 * Math.exp(-t * 5.0);
+            const p4 = Math.sin(2 * Math.PI * f0 * 4.015 * t) * 0.20 * Math.exp(-t * 7.0);
+            const p5 = Math.sin(2 * Math.PI * f0 * 5.025 * t) * 0.12 * Math.exp(-t * 9.0);
+            const hammer = (t < 0.006 ? Math.sin(2 * Math.PI * 3200 * t) : 0) * 0.25;
+            const raw = (p1 + p2 + p3 + p4 + p5 + hammer) * Math.exp(-t * 0.8);
+            val = Math.tanh(raw * 1.3) / Math.tanh(1.3);
+            break;
+          }
+          case 'rhodes': {
+            const tremolo = 1.0 + 0.06 * Math.sin(2 * Math.PI * 4.5 * t);
+            const tine = Math.sin(2 * Math.PI * f0 * 3.98 * t) * 0.4 * Math.exp(-t * 12.0);
+            const tone1 = Math.sin(2 * Math.PI * f0 * t) * 0.8;
+            const tone2 = Math.sin(2 * Math.PI * f0 * 2.0 * t) * 0.25 * Math.exp(-t * 3.0);
+            const raw = (tone1 + tone2 + tine) * tremolo * Math.exp(-t * 1.5);
+            val = Math.tanh(raw * 1.4) / Math.tanh(1.4);
+            break;
+          }
+          case 'organ': {
+            const sub = Math.sin(2 * Math.PI * (f0 * 0.5) * t) * 0.6;
+            const d1 = Math.sin(2 * Math.PI * f0 * t) * 0.9;
+            const d2 = Math.sin(2 * Math.PI * (f0 * 1.5) * t) * 0.5;
+            const d3 = Math.sin(2 * Math.PI * (f0 * 2.0) * t) * 0.6;
+            const d4 = Math.sin(2 * Math.PI * (f0 * 3.0) * t) * 0.35;
+            const d5 = Math.sin(2 * Math.PI * (f0 * 4.0) * t) * 0.4;
+            const raw = (sub + d1 + d2 + d3 + d4 + d5) * 0.35;
+            val = Math.tanh(raw * 1.6) / Math.tanh(1.6);
+            break;
+          }
+          case 'strings': {
+            const s1 = (2 * ((t * f0 * 0.997) % 1.0) - 1.0) * 0.45;
+            const s2 = (2 * ((t * f0 * 1.003) % 1.0) - 1.0) * 0.45;
+            const sub = Math.sin(2 * Math.PI * (f0 * 0.5) * t) * 0.3;
+            const chorus = Math.sin(2 * Math.PI * 1.5 * t) * 0.15;
+            const att = Math.min(1.0, t / 0.10);
+            const raw = (s1 + s2 + sub) * (1.0 + chorus) * att * Math.exp(-t * 0.6);
+            val = Math.tanh(raw * 1.3) / Math.tanh(1.3);
+            break;
+          }
+          case 'brass': {
+            const cut = f0 * (1.5 + 4.0 * Math.exp(-t * 4.0));
+            const phase = (t * f0) % 1.0;
+            const saw = (2 * phase - 1.0);
+            const filt = Math.sin(2 * Math.PI * cut * t) * 0.45;
+            const att = Math.min(1.0, t / 0.025);
+            const raw = (saw * 0.6 + filt) * att * Math.exp(-t * 1.2);
+            val = Math.tanh(raw * 1.5) / Math.tanh(1.5);
+            break;
+          }
+          case 'bass': {
+            const pdrop = 60.0 * Math.exp(-t * 35.0);
+            const fc = f0 + pdrop;
+            const mod = Math.sin(2 * Math.PI * (fc * 2.0) * t) * 2.5 * Math.exp(-t * 4.5);
+            const car = Math.sin(2 * Math.PI * fc * t + mod) * 0.75;
+            const sub = Math.sin(2 * Math.PI * (f0 * 0.5) * t) * 0.6;
+            const raw = (car + sub) * Math.exp(-t * 2.0);
+            val = Math.tanh(raw * 1.8) / Math.tanh(1.8);
+            break;
+          }
+          case 'lead': {
+            const vib = 1.0 + 0.012 * Math.sin(2 * Math.PI * 5.5 * t);
+            const phase = (t * f0 * vib) % 1.0;
+            const pulse = (phase < 0.35 ? 1.0 : -1.0) * 0.65;
+            const sub = Math.sin(2 * Math.PI * f0 * t) * 0.35;
+            const att = Math.min(1.0, t / 0.01);
+            const raw = (pulse + sub) * att * Math.exp(-t * 1.0);
+            val = Math.tanh(raw * 2.0) / Math.tanh(2.0);
+            break;
+          }
+          case 'pluck': {
+            const c1 = Math.sin(2 * Math.PI * f0 * t) * 0.7;
+            const c2 = Math.sin(2 * Math.PI * f0 * 2.76 * t) * 0.45 * Math.exp(-t * 8.0);
+            const c3 = Math.sin(2 * Math.PI * f0 * 5.42 * t) * 0.3 * Math.exp(-t * 14.0);
+            const raw = (c1 + c2 + c3) * Math.exp(-t * 4.0);
+            val = Math.tanh(raw * 1.3) / Math.tanh(1.3);
+            break;
+          }
+          case 'pad': {
+            const att = Math.min(1.0, t / 0.18);
+            const p1 = Math.sin(2 * Math.PI * f0 * 0.998 * t) * 0.35;
+            const p2 = Math.sin(2 * Math.PI * f0 * 1.002 * t) * 0.35;
+            const p3 = Math.sin(2 * Math.PI * (f0 * 2.0) * t) * 0.2;
+            const p4 = Math.sin(2 * Math.PI * (f0 * 0.5) * t) * 0.25;
+            const raw = (p1 + p2 + p3 + p4) * att * Math.exp(-t * 0.4);
+            val = Math.tanh(raw * 1.2) / Math.tanh(1.2);
+            break;
+          }
+          case 'choir': {
+            const vib = 1.0 + 0.008 * Math.sin(2 * Math.PI * 5.2 * t);
+            const pitch = f0 * vib;
+            const glot = (2 * ((t * pitch) % 1.0) - 1.0) * 0.2;
+            const f1 = Math.sin(2 * Math.PI * 730 * t) * 0.45;
+            const f2 = Math.sin(2 * Math.PI * 1090 * t) * 0.35;
+            const f3 = Math.sin(2 * Math.PI * 2440 * t) * 0.2;
+            const att = Math.min(1.0, t / 0.015);
+            const raw = (glot + f1 + f2 + f3) * att * Math.exp(-t * 2.2);
+            val = Math.tanh(raw * 1.4) / Math.tanh(1.4);
+            break;
+          }
+          case 'kalimba': {
+            const c1 = Math.sin(2 * Math.PI * f0 * t) * 0.75;
+            const c2 = Math.sin(2 * Math.PI * f0 * 3.98 * t) * 0.35 * Math.exp(-t * 10.0);
+            const wood = (t < 0.005 ? Math.sin(2 * Math.PI * 1800 * t) : 0) * 0.4;
+            const raw = (c1 + c2 + wood) * Math.exp(-t * 3.5);
+            val = Math.tanh(raw * 1.3) / Math.tanh(1.3);
+            break;
+          }
+          case 'acid': {
+            const phase = (t * f0) % 1.0;
+            const saw = (2 * phase - 1.0) * 0.7;
+            const sweep = Math.sin(2 * Math.PI * (f0 * (2.0 + 6.0 * Math.exp(-t * 8.0))) * t) * 0.4;
+            const att = Math.min(1.0, t / 0.003);
+            const raw = (saw + sweep) * att * Math.exp(-t * 3.0);
+            val = Math.tanh(raw * 2.4) / Math.tanh(2.4);
+            break;
+          }
+          default:
+            val = Math.sin(2 * Math.PI * f0 * t) * Math.exp(-t * 2.0);
+        }
+
+        data[i] = val * 0.88;
+      }
+
+      return buffer;
+    }
+
+    function renderKeyboardPresetsGrid() {
+      const grid = document.getElementById('keyboardPresetsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      Object.values(KEYBOARD_PRESETS).forEach(p => {
+        const btn = document.createElement('div');
+        btn.className = `kb-preset-btn ${p.key === currentKeyboardPresetKey ? 'active' : ''}`;
+        btn.id = `kbPresetBtn_${p.key}`;
+        btn.title = `Preset: ${p.fullName} (${p.category}) - Clic para disparar en teclado`;
+
+        btn.innerHTML = `
+          <span class="kb-preset-icon">${p.icon}</span>
+          <div class="kb-preset-info">
+            <span class="kb-preset-name">${p.name}</span>
+            <span class="kb-preset-category">${p.category}</span>
+          </div>
+        `;
+
+        btn.addEventListener('click', async () => {
+          await initAudio();
+          selectKeyboardPreset(p.key, true);
+        });
+
+        grid.appendChild(btn);
+      });
+    }
+
+    async function selectKeyboardPreset(key, playAudition = true) {
+      await initAudio();
+      const preset = KEYBOARD_PRESETS[key];
+      if (!preset) return;
+
+      currentKeyboardPresetKey = key;
+
+      // Lazy generate buffer if not cached
+      if (!preset.buffer) {
+        preset.buffer = generateKeyboardPresetBuffer(key);
+      }
+
+      // Load into active pad so all DSP knobs, ADSR, filter and sequencer track adapt to this instrument
+      const pad = pads[selectedPadIndex];
+      if (pad && preset.buffer) {
+        pad.name = preset.fullName;
+        pad.sampleKey = key;
+        pad.buffer = cloneAudioBuffer(preset.buffer);
+        pad.originalBuffer = cloneAudioBuffer(preset.buffer);
+        pad.start = 0;
+        pad.end = preset.buffer.duration;
+        pad.reverse = false;
+        pad.ampA = preset.ampA;
+        pad.ampD = preset.ampD;
+        pad.ampS = preset.ampS;
+        pad.ampR = preset.ampR;
+        pad.filtCut = preset.filtCut;
+        pad.filtRes = preset.filtRes;
+
+        drawActiveWaveform();
+        syncKnobsToActivePad();
+        renderPadGrid();
+        renderStepGrid();
+        if (currentSeqView === 'multitrack') {
+          renderMultiTrackGrid();
+        }
+      }
+
+      // Update Header Badges
+      const tagEl = document.getElementById('activePresetTag');
+      if (tagEl) {
+        tagEl.textContent = `${preset.icon} ${preset.fullName.toUpperCase()}`;
+      }
+      const soundNameEl = document.getElementById('chromaticSoundName');
+      if (soundNameEl) {
+        soundNameEl.textContent = `PAD ${String(selectedPadIndex + 1).padStart(2, '0')}: ${preset.fullName}`;
+      }
+
+      // Highlight active preset chip
+      document.querySelectorAll('.kb-preset-btn').forEach(b => {
+        b.classList.toggle('active', b.id === `kbPresetBtn_${key}`);
+      });
+
+      // Play short audition note on selection if requested
+      if (playAudition) {
+        playPad(selectedPadIndex, 0.9, 0, 0, 'preset_audition');
+        setTimeout(() => {
+          stopPadVoice(selectedPadIndex, 'preset_audition');
+        }, 450);
+      }
+    }
+
     function renderPianoKeyboard() {
       const bed = document.getElementById('pianoKeysBed');
       if (!bed) return;
@@ -3562,6 +4120,14 @@ const EMBEDDED_STUDIO_SAMPLES = {
       }
 
       if (isChromatic) {
+        // If current pad is a drum sound, auto-load keyboard preset for melodic playing
+        const pad = pads[selectedPadIndex];
+        const isDrum = pad && (pad.name.includes('Kick') || pad.name.includes('Snare') || pad.name.includes('Hat') || pad.name.includes('Tom') || pad.name.includes('Clap') || pad.name.includes('Rim') || pad.name.includes('Cymbal') || pad.name.includes('Cowbell'));
+        if (isDrum || !currentKeyboardPresetKey) {
+          selectKeyboardPreset(currentKeyboardPresetKey || 'piano', false);
+        }
+
+        renderKeyboardPresetsGrid();
         updateChromaticSoundDisplay();
         renderPianoKeyboard();
         renderMiniPadsPicker();
